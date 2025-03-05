@@ -1,0 +1,12 @@
+{
+    "domain": "hole",
+    "version": "1.0.0",
+    "name": "Pi-Hole V6",
+    "dependencies": [],
+    "codeowners": ["@erikkamph"],
+    "requirements": ["pydantic==2.10.6", "requests==2.32.3", "validators==0.34.0"],
+    "iot_class": "local_polling",
+    "single_config_entry": true,
+    "config_flow": true,
+    "documentation": "https://github.com/erikkamph/hole/tree/main/README.md"
+}

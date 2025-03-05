@@ -1,0 +1,42 @@
+networks:
+  default:
+    ipam:
+      config:
+        - subnet: 10.110.0.0/16
+          ip_range: 10.110.0.16/29
+          gateway: 10.110.0.17
+
+services:
+  homeassistant:
+    container_name: homeassistant
+    image: "ghcr.io/home-assistant/home-assistant:stable"
+    environment:
+      TZ: Europe/Stockholm
+    restart: unless-stopped
+    volumes:
+      - ../config:/config
+      - ../custom_components:/config/custom_components:ro
+    develop:
+      watch:
+        - path: ./custom_components/hole
+          action: sync+restart
+          target: /config/custom_components/hole
+    privileged: true
+    networks:
+      - default
+    # extra_hosts:
+    #   - "pihole:host-gateway"
+    ports:
+      - 8123:8123
+  pihole:
+    container_name: pihole
+    image: pihole/pihole:latest
+    ports:
+      # Default HTTP Port
+      - "80:80/tcp"
+    networks:
+      - default
+    environment:
+      TZ: 'Europe/Stockholm'
+      FTLCONF_webserver_api_password: ''
+    restart: unless-stopped
