@@ -24,19 +24,5 @@ services:
     privileged: true
     networks:
       - default
-    # extra_hosts:
-    #   - "pihole:host-gateway"
     ports:
-      - 8123:8123
-  pihole:
-    container_name: pihole
-    image: pihole/pihole:latest
-    ports:
-      # Default HTTP Port
-      - "80:80/tcp"
-    networks:
-      - default
-    environment:
-      TZ: 'Europe/Stockholm'
-      FTLCONF_webserver_api_password: ''
-    restart: unless-stopped
+      - 80:8123

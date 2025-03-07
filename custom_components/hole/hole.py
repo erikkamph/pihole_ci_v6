@@ -1,35 +1,44 @@
-import os
 import validators
 from .exceptions import HoleConnectionError, HoleError 
 import logging
-import httpx
+from homeassistant.const import (
+    CONF_NAME,
+    CONF_HOST,
+    CONF_API_KEY,
+    CONF_PORT, 
+    CONF_SSL,
+    CONF_LOCATION
+)
+from typing import Any
+import aiohttp
 
 _LOGGER = logging.getLogger(__name__)
 
 
 class PiHole():
-    def __init__(self,
-                 pi_hole_api_url: str = os.getenv('PI_HOLE_API_URL', None),
-                 pi_hole_password: str = os.getenv('PI_HOLE_PASSWORD', None)):
-        if not pi_hole_api_url:
-            raise ValueError('You need to set PI_HOLE_API_URL!')
+    def __init__(self, config: dict[str, Any]):
+        if not config[CONF_HOST]:
+            raise ValueError('You need to set PI_HOLE_location!')
         
-        if not pi_hole_password:
+        if not config[CONF_API_KEY]:
             raise ValueError('You need to set PI_HOLE_PASSWORD in-order to get access!')
         
-        if not validators.url(pi_hole_api_url):
-            raise ValueError(f'The url {pi_hole_api_url} is not a valid url!')
+        if not validators.url(config[CONF_HOST]):
+            raise ValueError(f'The url {config[CONF_HOST]} is not a valid url!')
 
-        self.api = pi_hole_api_url
-        self.verify = 'https' in self.api
-        self.key = pi_hole_password
-    
+        self.host = config[CONF_HOST]
+        self.verify = config[CONF_SSL]
+        self.key = config[CONF_API_KEY]
+        self.port = config[CONF_PORT]
+        self.name = config[CONF_NAME]
+        self.location = config[CONF_LOCATION]
+
+        self.host_base = self.host if self.port == 80 or self.port == 443 else f"{self.host}:{self.port}"
+        self.api_base = f"{self.host_base}/{self.location}/"
+
     @staticmethod
     async def async_setup(data: dict) -> bool:
-        service = PiHole(
-            pi_hole_api_url=data['url'],
-            pi_hole_password=data['api_key']
-        )
+        service = PiHole(data)
         if await service.auth():
             _LOGGER.info("works!")
             return True
@@ -37,20 +46,20 @@ class PiHole():
         return False
 
     async def __call__(self, params: dict = {}):
-        async with httpx.AsyncClient(verify='https' in params['url']) as client:
-            req = httpx.Request(**params)
-            r = await client.send(req)
-            if r.status_code == 200:
-                response = r.json()
-                return response
-            _LOGGER.exception(r.text, stack_info=True)
-            return None
-        
+        async with aiohttp.ClientSession(base_url=self.api_base) as session:
+            method = {
+                'POST': session.post,
+                'GET': session.get
+            }
+            fn = method[params['method']]
+            async with fn(url=params['url'], headers=params['headers'], json=params.get('json', None)) as res:
+                return await res.json() if res.status == 200 else None
+
     async def auth(self):
         params = {
             'method': 'POST',
             'json': {'password': self.key},
-            'url': f'{self.api}/auth',
+            'url': 'auth',
             'headers': {'Content-Type': 'application/json'}
         }
         if (r := await self(params)) is not None:
@@ -65,11 +74,11 @@ class PiHole():
         if (headers := await self.auth()) is not None:
             params = {
                 'method': 'GET',
-                'url': f'{self.api}/dns/blocking',
+                'url': 'dns/blocking',
                 'headers': headers
             }
             if (r := await self(params)) is not None:
-                return r['blocking']
+                return r['blocking'] == 'enabled'
             raise HoleError('An error from the pi-hole API occurred!')
         raise HoleConnectionError('Not authorized to make calls to the API')
     
@@ -77,7 +86,7 @@ class PiHole():
         if (headers := await self.auth()) is not None:
             params = {
                 'headers': headers,
-                'url': f'{self.api}/info/version',
+                'url': 'info/version',
                 'method': 'GET'
             }
             if (r := await self(params)) is not None:
@@ -85,33 +94,18 @@ class PiHole():
             raise HoleError('An error from the pi-hole API occurred!')
         raise HoleConnectionError('Not authorized to make calls to the API')
     
-    async def turn_off(self):
+    async def toggle(self, blocking: bool = True, timer: int | None = None):
         if (headers := await self.auth()) is not None:
             params = {
                 'headers': headers,
-                'url': f'{self.api}/dns/blocking',
+                'url': 'dns/blocking',
                 'json': {
-                    'blocking': False,
-                    'timer': 500
+                    'blocking': blocking,
+                    'timer': timer
                 },
                 'method': 'POST'
             }
-            if (r := await self(params)) is not None:
-                return r['blocking']
-            return HoleError('An error from the pi-hole API occurred!')
-        raise HoleConnectionError('Not authorized to make calls to the API')
-
-    async def turn_on(self):
-        if (headers := await self.auth()) is not None:
-            params = {
-                'headers': headers,
-                'url': f'{self.api}/dns/blocking',
-                'json': {
-                    'blocking': True,
-                },
-                'method': 'POST'
-            }
-            if (r := await self(params)) is not None:
-                return r['blocking']
+            if (_ := await self(params)) is not None:
+                return blocking
             return HoleError('An error from the pi-hole API occurred!')
         raise HoleConnectionError('Not authorized to make calls to the API')

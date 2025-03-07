@@ -1,30 +1,106 @@
 import voluptuous as vol
 from .const import DOMAIN
-from homeassistant.const import CONF_API_KEY, CONF_URL
+from homeassistant.const import (
+    CONF_API_KEY,
+    CONF_HOST,
+    CONF_NAME,
+    CONF_PORT,
+    CONF_SSL,
+    CONF_LOCATION
+)
+from .const import (
+    DEFAULT_LOCATION,
+    DEFAULT_API_KEY,
+    DEFAULT_HOST,
+    DEFAULT_NAME,
+    DEFAULT_PORT,
+    DEFAULT_SSL
+)
 from homeassistant.config_entries import ConfigFlow
+from .hole import PiHole
 
 
 class HoleV6ConfigFlow(ConfigFlow, domain=DOMAIN):
     VERSION = 1
     MINOR_VERSION = 0
+
+    def __init__(self):
+        self._config: dict = {}
     
-    # async def async_step_user(self, user_input = None):
-    #     errors = {}
+    async def async_step_user(self, user_input = None):
+        errors = {}
 
-    #     if user_input:
-    #         return self.async_create_entry(title="Pi-Hole V6", data=user_input)
+        if user_input:
+            self._config = {
+                CONF_NAME: user_input[CONF_NAME]
+            }
 
-    #     return self.async_show_form(
-    #         step_id="user",
-    #         data_schema=vol.Schema(
-    #             {
-    #                 vol.Required(
-    #                     CONF_URL, msg="Pi-Hole API url", description={"suggested_value": "http://pi.hole/api"}
-    #                 ): str,
-    #                 vol.Required(
-    #                     CONF_API_KEY, msg="Pi-Hole API Key/Password"
-    #                 ): str
-    #             }
-    #         ),
-    #         errors=errors
-    #     )
+            return await self.async_step_host()
+
+        return self.async_show_form(
+            step_id="user",
+            data_schema=vol.Schema(
+                {
+                    vol.Optional(
+                        CONF_NAME, default=self._config.get(CONF_NAME, DEFAULT_NAME), description="Name of pihole instance"
+                    ): str
+                }
+            ),
+            errors=errors
+        )
+    
+    async def async_step_host(self, user_input = None):
+        errors = {}
+
+        if user_input:
+            self._config[CONF_HOST] = user_input[CONF_HOST]
+            self._config[CONF_PORT] = user_input[CONF_PORT]
+            self._config[CONF_SSL] = user_input[CONF_SSL]
+            self._config[CONF_LOCATION] = user_input[CONF_LOCATION]
+
+            return await self.async_step_api()
+
+        return self.async_show_form(
+            step_id="host",
+            data_schema=vol.Schema(
+                {
+                    vol.Required(
+                        CONF_HOST, default=self._config.get(CONF_HOST, DEFAULT_HOST), description="Location of the pi.hole instance"
+                    ): str,
+                    vol.Required(
+                        CONF_LOCATION, default=self._config.get(CONF_LOCATION, DEFAULT_LOCATION)
+                    ): str,
+                    vol.Required(
+                        CONF_PORT, default=self._config.get(CONF_PORT, DEFAULT_PORT)
+                    ): int,
+                    vol.Required(
+                        CONF_SSL, default=self._config.get(CONF_SSL, DEFAULT_SSL)
+                    ): bool
+                }
+            ),
+            errors=errors
+        )
+    
+    async def async_step_api(self, user_input = None):
+        errors = {}
+
+        if user_input:
+            self._config[CONF_API_KEY] = user_input[CONF_API_KEY]
+
+            if await PiHole.async_setup(self._config):
+                return self.async_create_entry(
+                    title=self._config[CONF_NAME],
+                    data=self._config
+                )
+        
+        return self.async_show_form(
+            step_id='api',
+            errors=errors,
+            data_schema=vol.Schema(
+                {
+                    vol.Required(
+                        CONF_API_KEY, default=self._config.get(CONF_API_KEY, DEFAULT_API_KEY), description="Api key or password for the pi.hole instance"
+                    ): str
+                }
+            )
+        )
