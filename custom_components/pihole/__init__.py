@@ -5,7 +5,7 @@ from homeassistant.const import Platform
 from .const import DOMAIN
 import logging
 
-_LOGGING = logging.getLogger(__name__)
+_LOGGER = logging.getLogger(__name__)
 
 async def async_setup(hass: HomeAssistant, config: ConfigEntry):
     hass.states.async_set(f"{DOMAIN}.state", "initialized")
@@ -17,5 +17,5 @@ async def async_setup_entry(hass: HomeAssistant, config: ConfigEntry):
         await hass.config_entries.async_forward_entry_setups(config, [Platform.SWITCH])
         return True
     except ConfigEntryNotReady as ex:
-        _LOGGING.error(ex)
+        _LOGGER.error(ex)
         return False

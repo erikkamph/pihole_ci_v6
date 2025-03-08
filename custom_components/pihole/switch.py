@@ -11,7 +11,9 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback, async_get
 from homeassistant.helpers import config_validation as cv
 
 from .hole import PiHole
-from .const import SERVICE_DISABLE, SERVICE_DISABLE_ATTR_DURATION
+from .models.const import SERVICE_DISABLE, SERVICE_DISABLE_ATTR_DURATION
+
+_LOGGER = logging.getLogger(__name__)
 
 async def async_setup_entry(hass: HomeAssistant,
                             config: ConfigEntry,

@@ -1,23 +1,28 @@
+from homeassistant.config_entries import ConfigFlow
+from .models.config import PiHoleConfig
+from pydantic import ValidationError
 import voluptuous as vol
-from .const import DOMAIN
+import logging
 from homeassistant.const import (
-    CONF_API_KEY,
     CONF_HOST,
-    CONF_NAME,
+    CONF_LOCATION,
     CONF_PORT,
     CONF_VERIFY_SSL,
-    CONF_LOCATION
+    CONF_NAME,
+    CONF_API_KEY,
 )
-from .const import (
+from .models.const import (
     DEFAULT_LOCATION,
     DEFAULT_API_KEY,
     DEFAULT_HOST,
     DEFAULT_NAME,
     DEFAULT_PORT,
-    DEFAULT_VERIFY_SSL
+    DEFAULT_VERIFY_SSL,
+    CONF_SCHEMA,
+    DOMAIN
 )
-from homeassistant.config_entries import ConfigFlow
-from .hole import PiHole
+
+_LOGGER = logging.getLogger(__name__)
 
 
 class HoleV6ConfigFlow(ConfigFlow, domain=DOMAIN):
@@ -57,6 +62,7 @@ class HoleV6ConfigFlow(ConfigFlow, domain=DOMAIN):
             self._config[CONF_PORT] = user_input[CONF_PORT]
             self._config[CONF_VERIFY_SSL] = user_input[CONF_VERIFY_SSL]
             self._config[CONF_LOCATION] = user_input[CONF_LOCATION]
+            self._config[CONF_SCHEMA] = user_input[CONF_SCHEMA]
 
             return await self.async_step_api()
 
@@ -66,6 +72,9 @@ class HoleV6ConfigFlow(ConfigFlow, domain=DOMAIN):
                 {
                     vol.Required(
                         CONF_HOST, default=self._config.get(CONF_HOST, DEFAULT_HOST), description="Location of the pi.hole instance"
+                    ): str,
+                    vol.Required(
+                        CONF_SCHEMA, default=self._config.get(CONF_SCHEMA, "http"), description="http or https schema"
                     ): str,
                     vol.Required(
                         CONF_LOCATION, default=self._config.get(CONF_LOCATION, DEFAULT_LOCATION)
@@ -87,11 +96,16 @@ class HoleV6ConfigFlow(ConfigFlow, domain=DOMAIN):
         if user_input:
             self._config[CONF_API_KEY] = user_input[CONF_API_KEY]
 
-            if await PiHole.async_setup(self._config):
-                return self.async_create_entry(
-                    title=self._config[CONF_NAME],
-                    data=self._config
-                )
+            try:
+                validated = PiHoleConfig.model_validate(self._config)
+                
+                if validated:
+                    return self.async_create_entry(
+                        title=validated.name,
+                        data=self._config
+                    )
+            except ValidationError as ex:
+                _LOGGER.exception(ex, stack_info=True)
         
         return self.async_show_form(
             step_id='api',
