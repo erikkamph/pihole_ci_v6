@@ -5,7 +5,7 @@ from homeassistant.const import (
     CONF_HOST,
     CONF_NAME,
     CONF_PORT,
-    CONF_SSL,
+    CONF_VERIFY_SSL,
     CONF_LOCATION
 )
 from .const import (
@@ -14,7 +14,7 @@ from .const import (
     DEFAULT_HOST,
     DEFAULT_NAME,
     DEFAULT_PORT,
-    DEFAULT_SSL
+    DEFAULT_VERIFY_SSL
 )
 from homeassistant.config_entries import ConfigFlow
 from .hole import PiHole
@@ -55,7 +55,7 @@ class HoleV6ConfigFlow(ConfigFlow, domain=DOMAIN):
         if user_input:
             self._config[CONF_HOST] = user_input[CONF_HOST]
             self._config[CONF_PORT] = user_input[CONF_PORT]
-            self._config[CONF_SSL] = user_input[CONF_SSL]
+            self._config[CONF_VERIFY_SSL] = user_input[CONF_VERIFY_SSL]
             self._config[CONF_LOCATION] = user_input[CONF_LOCATION]
 
             return await self.async_step_api()
@@ -74,7 +74,7 @@ class HoleV6ConfigFlow(ConfigFlow, domain=DOMAIN):
                         CONF_PORT, default=self._config.get(CONF_PORT, DEFAULT_PORT)
                     ): int,
                     vol.Required(
-                        CONF_SSL, default=self._config.get(CONF_SSL, DEFAULT_SSL)
+                        CONF_VERIFY_SSL, default=self._config.get(CONF_VERIFY_SSL, DEFAULT_VERIFY_SSL)
                     ): bool
                 }
             ),

@@ -1,7 +1,7 @@
 {
-    "domain": "hole",
+    "domain": "pihole_v6",
     "version": "1.0.0",
-    "name": "Pi-Hole V6",
+    "name": "Pi-Hole V6 (Dev)",
     "dependencies": [],
     "codeowners": ["@erikkamph"],
     "requirements": ["pydantic==2.10.6", "requests==2.32.3", "validators==0.34.0"],
