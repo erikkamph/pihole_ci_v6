@@ -1,6 +1,7 @@
 import logging
 from datetime import timedelta
 from typing import Any
+import voluptuous as vol
 
 from homeassistant.components.switch import SwitchEntity
 from homeassistant.core import callback
@@ -11,6 +12,12 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.config_entries import ConfigEntry
 from .data import PiHoleConfigData
+from homeassistant.helpers.entity_platform import async_get_current_platform
+from homeassistant.helpers import config_validation as cv
+from .models.const import (
+    SERVICE_DISABLE,
+    SERVICE_DISABLE_ATTR_DURATION,
+)
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -20,6 +27,17 @@ async def async_setup_entry(hass: HomeAssistant,
                             async_add_entities: AddEntitiesCallback):
     switches = [ToggleHole(entry.runtime_data.coordinator, 0, name=entry.runtime_data.config.name)]
     async_add_entities(switches)
+
+    platform = async_get_current_platform()
+    platform.async_register_entity_service(
+        SERVICE_DISABLE,
+        {
+            vol.Required(SERVICE_DISABLE_ATTR_DURATION): vol.All(
+                cv.time_period_str, cv.positive_timedelta
+            )
+        },
+        "async_disable"
+    )
     
 
 class ToggleHole(PiHoleEntity, SwitchEntity):

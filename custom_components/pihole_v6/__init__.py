@@ -1,19 +1,14 @@
-import voluptuous as vol
 from homeassistant.core import HomeAssistant
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.exceptions import ConfigEntryNotReady
 from homeassistant.const import Platform
 import logging
-from homeassistant.helpers.entity_platform import async_get_current_platform
-from homeassistant.helpers import config_validation as cv
 from homeassistant.exceptions import ConfigEntryAuthFailed
 from homeassistant.helpers.update_coordinator import (
     DataUpdateCoordinator,
     UpdateFailed
 )
 from .models.const import (
-    SERVICE_DISABLE,
-    SERVICE_DISABLE_ATTR_DURATION,
     MIN_TIME_BETWEEN_UPDATES,
     DOMAIN
 )
@@ -35,17 +30,6 @@ async def async_setup(hass: HomeAssistant, entry: ConfigEntry):
 
 async def async_setup_entry(hass: HomeAssistant, config: PiHoleConfigData):
     try:
-        platform = async_get_current_platform()
-        platform.async_register_entity_service(
-            SERVICE_DISABLE,
-            {
-                vol.Required(SERVICE_DISABLE_ATTR_DURATION): vol.All(
-                    cv.time_period_str, cv.positive_timedelta
-                )
-            },
-            "async_disable"
-        )
-
         api = PiHole(hass, config)
         async def async_update_data() -> None:
             try:
