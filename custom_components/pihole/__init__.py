@@ -28,7 +28,7 @@ platforms = [
 
 
 async def async_setup(hass: HomeAssistant, entry: ConfigEntry):
-    entry.runtime_data = PiHoleConfigData()
+    entry.runtime_data = PiHoleConfigData(None, None, None)
     hass.states.async_set(f"{DOMAIN}.state", "initialized")
     return True
 
