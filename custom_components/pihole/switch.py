@@ -7,14 +7,24 @@ from homeassistant.core import callback
 
 from .models.dns import PiHoleDnsBlocking
 from .entity import PiHoleEntity
+from homeassistant.core import HomeAssistant
+from homeassistant.helpers.entity_platform import AddEntitiesCallback
+from homeassistant.config_entries import ConfigEntry
+from .data import PiHoleConfigData
 
 _LOGGER = logging.getLogger(__name__)
 
 
+async def async_setup_entry(hass: HomeAssistant,
+                            entry: PiHoleConfigData,
+                            async_add_entities: AddEntitiesCallback):
+    switches = [ToggleHole(entry.runtime_data.coordinator, 0, name=entry.runtime_data.config.name)]
+    async_add_entities(switches)
+    
+
 class ToggleHole(PiHoleEntity, SwitchEntity):
     def __init__(self, coordinator, idx):
         super().__init__(coordinator, context=idx)
-        self._attr_name = "Pi-Hole"
         self.is_on = True
         self.idx = idx
 
@@ -23,6 +33,10 @@ class ToggleHole(PiHoleEntity, SwitchEntity):
         blocking = PiHoleDnsBlocking(**self.coordinator.data[self.idx]['blocking'])
         self.is_on = blocking.model_dump()['blocking']
         self.async_write_ha_state()
+
+    @property
+    def name(self) -> str:
+        return self._name
 
     @property
     def icon(self) -> str:

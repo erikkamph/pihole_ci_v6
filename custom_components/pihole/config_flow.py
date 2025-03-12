@@ -73,6 +73,7 @@ class HoleV6ConfigFlow(ConfigFlow, domain=DOMAIN):
                     vol.Required(
                         CONF_HOST,
                         default=self._config.get(CONF_HOST, DEFAULT_HOST),
+                        data_description="Hostname of the instance"
                     ): str,
                     vol.Required(
                         CONF_SCHEMA,

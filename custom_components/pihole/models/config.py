@@ -64,3 +64,4 @@ class PiHoleConfig(BaseModel):
             if not url(hole_url):
                 raise ValueError('The supplied parameters schema, host, port and location needs to make up a valid url')
         return data
+

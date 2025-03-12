@@ -3,7 +3,6 @@ from homeassistant.core import HomeAssistant
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.exceptions import ConfigEntryNotReady
 from homeassistant.const import Platform
-from .models.const import SERVICE_DISABLE, SERVICE_DISABLE_ATTR_DURATION, MIN_TIME_BETWEEN_UPDATES
 import logging
 from homeassistant.helpers.entity_platform import async_get_current_platform
 from homeassistant.helpers import config_validation as cv
@@ -12,16 +11,29 @@ from homeassistant.helpers.update_coordinator import (
     DataUpdateCoordinator,
     UpdateFailed
 )
+from .models.const import (
+    SERVICE_DISABLE,
+    SERVICE_DISABLE_ATTR_DURATION,
+    MIN_TIME_BETWEEN_UPDATES,
+    DOMAIN
+)
 from .models.config import PiHoleConfig
-from datetime import timedelta
 from .hole import PiHole
-from .switch import ToggleHole
-
+from .data import PiHoleConfigData
 
 _LOGGER = logging.getLogger(__name__)
+platforms = [
+    Platform.SWITCH
+]
 
 
-async def async_setup_entry(hass: HomeAssistant, config: ConfigEntry, async_add_entities):
+async def async_setup(hass: HomeAssistant, entry: ConfigEntry):
+    entry.runtime_data = PiHoleConfigData()
+    hass.states.async_set(f"{DOMAIN}.state", "initialized")
+    return True
+
+
+async def async_setup_entry(hass: HomeAssistant, config: PiHoleConfigData):
     try:
         platform = async_get_current_platform()
         platform.async_register_entity_service(
@@ -58,12 +70,9 @@ async def async_setup_entry(hass: HomeAssistant, config: ConfigEntry, async_add_
         )
 
         await coordinator.async_config_entry_first_refresh()
+        config.runtime_data = PiHoleConfigData(api, coordinator, PiHoleConfig(**config.data))
 
-        entities = [ToggleHole]
-        async_add_entities(
-            entity(coordinator, idx) for idx, entity in enumerate(entities)
-        )
-
+        await hass.config_entries.async_forward_entry_setups(config, platforms)
         return True
     except ConfigEntryNotReady as ex:
         _LOGGER.error(ex)

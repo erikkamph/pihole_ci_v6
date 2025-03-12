@@ -1,10 +1,10 @@
 ## Bronze
-- [ ] `action-setup` - Service actions are registered in async_setup
-- [ ] `appropriate-polling` - If it's a polling integration, set an appropriate polling interval
+- [x] `action-setup` - Service actions are registered in async_setup
+- [x] `appropriate-polling` - If it's a polling integration, set an appropriate polling interval
 - [ ] `brands` - Has branding assets available for the integration
 - [ ] `common-modules` - Place common patterns in common modules
 - [ ] `config-flow-test-coverage` - Full test coverage for the config flow
-- [ ] `config-flow` - Integration needs to be able to be set up via the UI
+- [x] `config-flow` - Integration needs to be able to be set up via the UI
     - [ ] Uses `data_description` to give context to fields
     - [ ] Uses `ConfigEntry.data` and `ConfigEntry.options` correctly
 - [ ] `dependency-transparency` - Dependency transparency

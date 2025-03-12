@@ -4,7 +4,7 @@ from typing_extensions import Annotated
 from typing import Optional
 
 
-class BlockingEnum(Enum, str):
+class BlockingEnum(str, Enum):
     enabled='enabled'
     disabled='disabled'
     failed='failed'
