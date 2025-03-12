@@ -47,7 +47,7 @@ class HoleV6ConfigFlow(ConfigFlow, domain=DOMAIN):
             data_schema=vol.Schema(
                 {
                     vol.Optional(
-                        CONF_NAME, default=self._config.get(CONF_NAME, DEFAULT_NAME), description="Name of pihole instance"
+                        CONF_NAME, default=self._config.get(CONF_NAME, DEFAULT_NAME)
                     ): str
                 }
             ),
@@ -71,19 +71,24 @@ class HoleV6ConfigFlow(ConfigFlow, domain=DOMAIN):
             data_schema=vol.Schema(
                 {
                     vol.Required(
-                        CONF_HOST, default=self._config.get(CONF_HOST, DEFAULT_HOST), description="Location of the pi.hole instance"
+                        CONF_HOST,
+                        default=self._config.get(CONF_HOST, DEFAULT_HOST),
                     ): str,
                     vol.Required(
-                        CONF_SCHEMA, default=self._config.get(CONF_SCHEMA, "http"), description="http or https schema"
+                        CONF_SCHEMA,
+                        default="http",
+                    ): vol.In(["http", "https"]),
+                    vol.Required(
+                        CONF_LOCATION,
+                        default=self._config.get(CONF_LOCATION, DEFAULT_LOCATION)
                     ): str,
                     vol.Required(
-                        CONF_LOCATION, default=self._config.get(CONF_LOCATION, DEFAULT_LOCATION)
-                    ): str,
-                    vol.Required(
-                        CONF_PORT, default=self._config.get(CONF_PORT, DEFAULT_PORT)
+                        CONF_PORT,
+                        default=self._config.get(CONF_PORT, DEFAULT_PORT)
                     ): int,
                     vol.Required(
-                        CONF_VERIFY_SSL, default=self._config.get(CONF_VERIFY_SSL, DEFAULT_VERIFY_SSL)
+                        CONF_VERIFY_SSL,
+                        default=self._config.get(CONF_VERIFY_SSL, DEFAULT_VERIFY_SSL)
                     ): bool
                 }
             ),
@@ -113,7 +118,7 @@ class HoleV6ConfigFlow(ConfigFlow, domain=DOMAIN):
             data_schema=vol.Schema(
                 {
                     vol.Required(
-                        CONF_API_KEY, default=self._config.get(CONF_API_KEY, DEFAULT_API_KEY), description="Api key or password for the pi.hole instance"
+                        CONF_API_KEY, default=self._config.get(CONF_API_KEY, DEFAULT_API_KEY)
                     ): str
                 }
             )

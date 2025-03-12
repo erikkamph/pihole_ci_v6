@@ -1,0 +1,29 @@
+{
+    "config": {
+        "flow_title": "Pi-Hole V6 Custom Integration Setup",
+        "step": {
+            "user": {
+                "title": "Step 1. Instance name",
+                "data": {
+                    "name": "Name of the Pi-Hole instance"
+                }
+            },
+            "host": {
+                "title": "Step 2. Instance information",
+                "data": {
+                    "host": "Host IP, domain name or hostname",
+                    "scheme": "Scheme:",
+                    "location": "The location of the api e.g. /api but without '/'",
+                    "port": "The port that pihole is hosted on",
+                    "verify_ssl": "Verify SSL"
+                }
+            },
+            "api": {
+                "title": "Step 3. Instance authentication",
+                "data": {
+                    "api_key": "API Key or Password"
+                }
+            }
+        }
+    }
+}

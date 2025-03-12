@@ -2,44 +2,27 @@ import logging
 from datetime import timedelta
 from typing import Any
 
-import voluptuous as vol
-
 from homeassistant.components.switch import SwitchEntity
-from homeassistant.core import HomeAssistant
-from homeassistant.config_entries import ConfigEntry
-from homeassistant.helpers.entity_platform import AddEntitiesCallback, async_get_current_platform
-from homeassistant.helpers import config_validation as cv
+from homeassistant.core import callback
 
-from .hole import PiHole
-from .models.const import SERVICE_DISABLE, SERVICE_DISABLE_ATTR_DURATION
+from .models.dns import PiHoleDnsBlocking
+from .entity import PiHoleEntity
 
 _LOGGER = logging.getLogger(__name__)
 
-async def async_setup_entry(hass: HomeAssistant,
-                            config: ConfigEntry,
-                            async_add_entities: AddEntitiesCallback):
 
-    device = PiHole(config.data)
-    switch = ToggleHole(device)
-    async_add_entities([switch], True)
-
-    platform = async_get_current_platform()
-    platform.async_register_entity_service(
-        SERVICE_DISABLE,
-        {
-            vol.Required(SERVICE_DISABLE_ATTR_DURATION): vol.All(
-                cv.time_period_str, cv.positive_timedelta
-            )
-        },
-        "async_disable"
-    )
-
-
-class ToggleHole(SwitchEntity):
-    def __init__(self, device: PiHole):
+class ToggleHole(PiHoleEntity, SwitchEntity):
+    def __init__(self, coordinator, idx):
+        super().__init__(coordinator, context=idx)
         self._attr_name = "Pi-Hole"
-        self.device = device
-        self._is_on = True
+        self.is_on = True
+        self.idx = idx
+
+    @callback
+    def _handle_coordinator_update(self) -> None:
+        blocking = PiHoleDnsBlocking(**self.coordinator.data[self.idx]['blocking'])
+        self.is_on = blocking.model_dump()['blocking']
+        self.async_write_ha_state()
 
     @property
     def icon(self) -> str:
@@ -51,17 +34,17 @@ class ToggleHole(SwitchEntity):
     
     @property
     def is_on(self) -> bool:
-        return self._is_on
+        return self.is_on
     
     async def async_turn_on(self, **kwargs):
-        self._is_on = await self.device.toggle()
-        self.async_write_ha_state()
+        await self.device.toggle()
+        await self.coordinator.async_request_refresh()
 
     async def async_turn_off(self, **kwargs):
-        self.disable(timedelta(minutes=5).seconds)
-        self.async_write_ha_state()
+        await self.async_disable(timedelta(minutes=5).seconds)
+        await self.coordinator.async_request_refresh()
 
-    async def disable(self, duration: Any = None, **kwargs):
+    async def async_disable(self, duration: Any = None, **kwargs):
         duration_seconds = True
         if duration:
             duration_seconds = duration
@@ -70,6 +53,6 @@ class ToggleHole(SwitchEntity):
                 blocking=False,
                 timer=duration_seconds
             )
-            await self.async_update()
         except Exception as error:
             _LOGGER.exception(str(error), stack_info=True)
+            return True

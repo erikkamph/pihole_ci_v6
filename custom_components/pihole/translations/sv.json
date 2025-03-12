@@ -1,0 +1,29 @@
+{
+    "config": {
+        "flow_title": "Pi-Hole V6 Custom Integration Setup",
+        "step": {
+            "user": {
+                "title": "Steg 1. Instans namn",
+                "data": {
+                    "name": "Namn för Pi-Hole instansen"
+                }
+            },
+            "host": {
+                "title": "Steg 3. Instans information",
+                "data": {
+                    "host": "Datornamn, IP Adress eller domännamn",
+                    "scheme": "Schema:",
+                    "location": "Platsen för api exempelvis /api fast utan '/'",
+                    "port": "Porten som är öppen för Pi-Hole",
+                    "verify_ssl": "Verifiera SSL"
+                }
+            },
+            "api": {
+                "title": "Steg 3. Instans autentisering",
+                "data": {
+                    "api_key": "API Nyckel eller lösenord"
+                }
+            }
+        }
+    }
+}

@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 DOMAIN="pihole_v6"
 
 DEFAULT_HOST = "pi.hole"
@@ -16,3 +18,5 @@ CONF_SCHEMA = "scheme"
 
 HEADER_SID = "X-FTL-SID"
 HEADER_CSRF = "X-FTL-CSRF"
+
+MIN_TIME_BETWEEN_UPDATES = timedelta(minutes=2, seconds=30)

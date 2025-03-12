@@ -34,7 +34,7 @@ class PiHoleConfig(BaseModel):
 
     @property
     def api_url(self):
-        return f"{self.scheme}://{self.host}:{self.port}/{self.location}"
+        return f"{self.scheme}://{self.host}:{self.port}/{self.location}/"
     
     @property
     def auth_data(self):
@@ -55,6 +55,9 @@ class PiHoleConfig(BaseModel):
 
             if CONF_LOCATION not in data:
                 raise ValueError('Location needs to be supplied!')
+            
+            if CONF_API_KEY not in data:
+                raise ValueError('You need to supply an api key or a password to access pihole data!')
             
             hole_url = f"{data[CONF_SCHEMA]}://{data[CONF_HOST]}:{data[CONF_PORT]}/{data[CONF_LOCATION]}"
             

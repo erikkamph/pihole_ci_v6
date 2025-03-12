@@ -1,4 +1,13 @@
 # PiHole V6 Custom Integration
+## Translations
+Currently available for following languages:
+- Japanese
+- Swedish
+- English
+
+Please verify translation, and if you have a suggestion, open an issue and I will fix it.
+If you want a translation for your language, open a PR in a separate branch and I will check it.
+
 ## Setup
 ### Setup with git and docker
 1. `git clone git@github.com:erikkamph/pihole_ci_v6.git` if using ssh otherwise `git clone https://github.com/erikkamph/pihole_ci_v6.git`

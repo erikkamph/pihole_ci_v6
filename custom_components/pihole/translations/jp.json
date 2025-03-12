@@ -1,0 +1,29 @@
+{
+    "config": {
+        "flow_title": "Pi-Hole V6カスタム統合セットアップ",
+        "step": {
+            "user": {
+                "title": "ステップ 1. インスタンス名",
+                "data": {
+                    "name": "Pi-Holeインスタンスの名前"
+                }
+            },
+            "host": {
+                "title": "ステップ 2. インスタンス情報",
+                "data": {
+                    "host": "ホストIP、ドメイン名、またはホスト名",
+                    "scheme": "スキーマ：",
+                    "location": "apiの場所（例：/api、'/'は含まない",
+                    "port": "Pi-Holeがホストされているポート",
+                    "verify_ssl": "SSLの検証"
+                }
+            },
+            "api": {
+                "title": "ステップ 3. インスタンス認証",
+                "data": {
+                    "api_key": "APIキーまたはパスワード"
+                }
+            }
+        }
+    }
+}
