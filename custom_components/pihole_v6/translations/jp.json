@@ -25,5 +25,17 @@
                 }
             }
         }
+    },
+    "services": {
+        "disable": {
+            "name": "無効",
+            "description": "設定した時間、Pi-Holeを無効にする。",
+            "fields": {
+                "duration": {
+                    "name": "期間",
+                    "description": "Pi-Holeを無効にする時間。"
+                }
+            }
+        }
     }
 }

@@ -25,5 +25,17 @@
                 }
             }
         }
+    },
+    "services": {
+        "disable": {
+            "name": "Disable",
+            "description": "Disables Pi-Hole for set amount of time",
+            "fields": {
+                "duration": {
+                    "name": "Duration",
+                    "description": "The amount of time to disable Pi-Hole for."
+                }
+            }
+        }
     }
 }

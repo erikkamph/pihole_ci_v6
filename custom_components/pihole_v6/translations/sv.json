@@ -25,5 +25,17 @@
                 }
             }
         }
+    },
+    "services": {
+        "disable": {
+            "name": "Pausa",
+            "description": "Pausa Pi-Hole för en stund",
+            "fields": {
+                "duration": {
+                    "name": "Längd",
+                    "description": "Längden på pausen"
+                }
+            }
+        }
     }
 }
