@@ -15,6 +15,7 @@ from .models.const import (
 from .models.config import PiHoleConfig
 from .hole import PiHole
 from .data import PiHoleConfigData
+from .exceptions import HoleException
 
 _LOGGER = logging.getLogger(__name__)
 platforms = [
@@ -39,7 +40,7 @@ async def async_setup_entry(hass: HomeAssistant, config: PiHoleConfigData):
                 await api.update_blocking()
                 await api.update_versions()
                 await api.update_statistics()
-            except Exception as ex:
+            except HoleException as ex:
                 raise UpdateFailed(f"Failed to communicate with the API: {ex}") from ex
             if not isinstance(api.data, dict):
                 raise ConfigEntryAuthFailed

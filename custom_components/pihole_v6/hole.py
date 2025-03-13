@@ -6,6 +6,10 @@ from .models.auth import PiHoleAuth
 from .models.const import HEADER_CSRF, HEADER_SID
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from .exceptions import HoleException
+from pydantic import BaseModel
+from .models.summary import PiHoleSummary
+from .models.dns import PiHoleDnsBlocking
+from .models.version import PiHoleVersionInfo
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -61,6 +65,12 @@ class PiHole():
         self.config.sid = auth_data.session.sid
         await self.hass.config_entries.async_update_entry(self.entry, data=self.config.model_dump(by_alias=True))
     
+    async def update_data(self, key: str, data: BaseModel) -> None:
+        if key in self.data:
+            self.data[key] = data
+        else:
+            self.data.update({key: data})
+
     async def update_blocking(self):
         request = {
             'method': 'GET',
@@ -73,27 +83,50 @@ class PiHole():
             }
         }
         response = await self(call=request)
-        if "blocking" in self.data:
-            self.data['blocking'] = response
-        else:
-            self.data.update({"blocking": response})
+        blocking = PiHoleDnsBlocking(**response)
+        await self.update_data("blocking", blocking)
 
     async def update_versions(self):
-        pass
+        request = {
+            'method': 'GET',
+            'request': {
+                'url': f'{self.config.api_url}info/version',
+                'headers': {
+                    HEADER_SID: self.config.sid,
+                    HEADER_CSRF: self.config.csrf
+                }
+            }
+        }
+        response = await self(call=request)
+        versions = PiHoleVersionInfo(**response)
+        await self.update_data("versions", versions)
 
     async def update_statistics(self):
-        pass
+        request = {
+            'method': 'GET',
+            'request': {
+                'url': f'{self.config.api_url}stats/summary',
+                'headers': {
+                    HEADER_SID: self.config.sid,
+                    HEADER_CSRF: self.config.csrf
+                }
+            }
+        }
+        response = await self(call=request)
+        summary = PiHoleSummary(**response)
+        await self.update_data("statistics", summary)
 
     async def toggle(self, blocking: bool = True, timer: int = None):
         await self.verify_or_update_session()
-        async with self.client.post(
-            url="/dns/blocking",
-            json={"blocking": blocking, "timer": timer},
-            headers={
-                HEADER_CSRF: self.config.csrf,
-                HEADER_SID: self.config.sid
+        request = {
+            'method': 'POST',
+            'request': {
+                'url': f"{self.config.api_url}dns/blocking",
+                'json': {'blocking': blocking, 'timer': timer},
+                'headers': {
+                    HEADER_CSRF: self.config.csrf,
+                    HEADER_SID: self.config.sid
+                }
             }
-        ) as r:
-            if r.status == 200:
-                return blocking
-            raise Exception(await r.text)
+        }
+        await self(call=request)
