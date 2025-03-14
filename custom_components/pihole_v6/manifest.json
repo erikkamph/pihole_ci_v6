@@ -3,7 +3,7 @@
     "name": "Pi-Hole V6 (Dev)",
     "codeowners": ["@erikkamph"],
     "config_flow": true,
-    "documentation": "https://github.com/erikkamph/hole/tree/main/README.md",
+    "documentation": "https://github.com/erikkamph/pihole_ci_v6/tree/main/README.md",
     "iot_class": "local_polling",
     "requirements": ["pydantic==2.10.6", "validators==0.34.0"],
     "version": "1.0.0"

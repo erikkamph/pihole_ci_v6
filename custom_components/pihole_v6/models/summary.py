@@ -87,4 +87,4 @@ class PiHoleSummary(BaseModel):
     queries: Queries
     clients: Clients
     gravity: Gravity
-    took: int
+    took: float

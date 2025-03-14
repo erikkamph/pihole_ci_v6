@@ -14,7 +14,7 @@ from .models.const import (
 )
 from .models.config import PiHoleConfig
 from .hole import PiHole
-from .data import PiHoleConfigData
+from .data import PiHoleData
 from .exceptions import HoleException
 
 _LOGGER = logging.getLogger(__name__)
@@ -24,12 +24,11 @@ platforms = [
 
 
 async def async_setup(hass: HomeAssistant, entry: ConfigEntry):
-    entry.runtime_data = PiHoleConfigData(None, None, None)
     hass.states.async_set(f"{DOMAIN}.state", "initialized")
     return True
 
 
-async def async_setup_entry(hass: HomeAssistant, config: PiHoleConfigData):
+async def async_setup_entry(hass: HomeAssistant, config: ConfigEntry):
     try:
         api = PiHole(hass, config)
         async def async_update_data() -> None:
@@ -55,7 +54,7 @@ async def async_setup_entry(hass: HomeAssistant, config: PiHoleConfigData):
         )
 
         await coordinator.async_config_entry_first_refresh()
-        config.runtime_data = PiHoleConfigData(api, coordinator, PiHoleConfig(**config.data))
+        config.runtime_data = PiHoleData(api, coordinator, PiHoleConfig(**config.data))
 
         await hass.config_entries.async_forward_entry_setups(config, platforms)
         return True

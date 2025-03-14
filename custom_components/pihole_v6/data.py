@@ -1,10 +1,14 @@
 from .hole import PiHole
 from .models.config import PiHoleConfig
-from homeassistant.config_entries import ConfigEntry
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
-type PiHoleConfigData = ConfigEntry[PiHoleData]
-class PiHoleData:
+
+class PiHoleData(object):
     api: PiHole
     coordinator: DataUpdateCoordinator[None]
     config: PiHoleConfig
+
+    def __init__(self, api: PiHole, coordinator: DataUpdateCoordinator[None], config: PiHoleConfig):
+        self.api = api
+        self.coordinator = coordinator
+        self.config = config

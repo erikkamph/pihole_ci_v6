@@ -1,4 +1,4 @@
-from pydantic import BaseModel, PlainSerializer
+from pydantic import BaseModel, PlainSerializer, Field
 from enum import Enum
 from typing_extensions import Annotated
 from typing import Optional
@@ -11,21 +11,21 @@ class BlockingEnum(str, Enum):
     unknown='unknown'
 
 
-def is_blocking(blocking: BlockingEnum):
-    match blocking:
-        case BlockingEnum.enabled:
-            return True
-        case BlockingEnum.disabled:
-            return False
-        case BlockingEnum.failed:
-            return False
-        case BlockingEnum.unknown:
-            return False
-
-BlockingAnnotated = Annotated[BlockingEnum, PlainSerializer(lambda _item: is_blocking(_item), return_type=bool)]
-
-
 class PiHoleDnsBlocking(BaseModel):
-    blocking: BlockingAnnotated
-    timer: Optional[int]
-    took: int
+    blocking: BlockingEnum
+    timer: Optional[int] = Field(default=None)
+    took: float
+
+    @property
+    def is_blocking(self):
+        match self.blocking:
+            case BlockingEnum.disabled:
+                return False
+            case BlockingEnum.enabled:
+                return True
+            case BlockingEnum.failed:
+                return True
+            case BlockingEnum.unknown:
+                return False
+            case _:
+                return False

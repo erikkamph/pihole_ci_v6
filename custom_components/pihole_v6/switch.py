@@ -11,21 +11,21 @@ from .entity import PiHoleEntity
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.config_entries import ConfigEntry
-from .data import PiHoleConfigData
 from homeassistant.helpers.entity_platform import async_get_current_platform
 from homeassistant.helpers import config_validation as cv
 from .models.const import (
     SERVICE_DISABLE,
     SERVICE_DISABLE_ATTR_DURATION,
 )
+from .hole import PiHole
 
 _LOGGER = logging.getLogger(__name__)
 
 
 async def async_setup_entry(hass: HomeAssistant,
-                            entry: PiHoleConfigData,
+                            entry: ConfigEntry,
                             async_add_entities: AddEntitiesCallback):
-    switches = [ToggleHole(entry.runtime_data.coordinator, 0, name=entry.runtime_data.config.name)]
+    switches = [ToggleHole(entry.runtime_data.coordinator, 0, hass, entry)]
     async_add_entities(switches)
 
     platform = async_get_current_platform()
@@ -41,15 +41,17 @@ async def async_setup_entry(hass: HomeAssistant,
     
 
 class ToggleHole(PiHoleEntity, SwitchEntity):
-    def __init__(self, coordinator, idx):
-        super().__init__(coordinator, context=idx)
-        self.is_on = True
-        self.idx = idx
+    def __init__(self, coordinator, idx, hass, config):
+        self._is_on = True
+        self._idx = idx
+        self._name = "Pi-Hole"
+        self.device = PiHole(hass, config)
+        super().__init__(coordinator, self._name, self.unique_id, config)
 
     @callback
     def _handle_coordinator_update(self) -> None:
-        blocking = PiHoleDnsBlocking(**self.coordinator.data[self.idx]['blocking'])
-        self.is_on = blocking.model_dump()['blocking']
+        blocking = PiHoleDnsBlocking(**self.coordinator.data[self._idx]['blocking'])
+        self.is_on = blocking.is_blocking
         self.async_write_ha_state()
 
     @property
@@ -66,7 +68,7 @@ class ToggleHole(PiHoleEntity, SwitchEntity):
     
     @property
     def is_on(self) -> bool:
-        return self.is_on
+        return self._is_on
     
     async def async_turn_on(self, **kwargs):
         await self.device.toggle()

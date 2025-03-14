@@ -24,7 +24,7 @@ class PiHoleEntity(CoordinatorEntity[DataUpdateCoordinator[None]]):
     @property
     def device_info(self) -> DeviceInfo:
         return DeviceInfo(
-            identifiers={{DOMAIN, self._server_unique_id}},
+            identifiers=set((DOMAIN, self._server_unique_id)),
             name=self._name,
             manufacturer='Pi-Hole',
             configuration_url=self.config.api_url

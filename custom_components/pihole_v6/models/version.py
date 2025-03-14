@@ -1,35 +1,35 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from typing import Optional
 
 
 class Local(BaseModel):
-    branch: Optional[str]
-    version: Optional[str]
-    hash: Optional[str]
+    branch: Optional[str] = Field(default=None)
+    version: Optional[str] = Field(default=None)
+    hash: Optional[str] = Field(default=None)
 
 
 class Remote(BaseModel):
-    version: Optional[str]
-    hash: Optional[str]
+    version: Optional[str] = Field(default=None)
+    hash: Optional[str] = Field(default=None)
 
 
 class Docker(BaseModel):
-    local: Optional[str]
-    remote: Optional[str]
+    local: Optional[str] = Field(default=None)
+    remote: Optional[str] = Field(default=None)
 
 
 class BaseVersionInfo(BaseModel):
-    local: Local
-    remote: Remote
+    local: Optional[Local] = Field(default=None)
+    remote: Optional[Remote] = Field(default=None)
 
 
 class Version(BaseModel):
-    core: BaseVersionInfo
-    web: BaseVersionInfo
-    ftl: BaseVersionInfo
+    core: Optional[BaseVersionInfo] = Field(default=None)
+    web: Optional[BaseVersionInfo] = Field(default=None)
+    ftl: Optional[BaseVersionInfo] = Field(default=None)
 
 
 class PiHoleVersionInfo(BaseModel):
-    version: Version
-    docker: Docker
-    took: int
+    version: Optional[Version] = Field(default=None)
+    docker: Optional[Docker] = Field(default=None)
+    took: float

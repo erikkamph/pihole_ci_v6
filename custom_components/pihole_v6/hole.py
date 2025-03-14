@@ -22,15 +22,15 @@ class PiHole():
         self.hass = hass
         self.data = {}
 
-    async def __call__(self, call: dict):
+    async def __call__(self, call: dict, skip_status: bool = False):
         method = {
             'post': self.client.post,
             'get': self.client.get,
             'delete': self.client.delete
         }
-        tmp_method = call['method']
+        tmp_method = call['method'].lower()
         async with method[tmp_method](**call['request']) as r:
-            if r.status == 200:
+            if skip_status or r.status == 200:
                 return await r.json()
             raise HoleException(await r.text())
         raise HoleException("Something unexpected happened with the request, session or client.")
@@ -46,7 +46,8 @@ class PiHole():
                 }
             }
         }
-        response = await self(request)
+        response = await self(request, skip_status=True)
+        _LOGGER.error(response)
         auth_response = PiHoleAuth(**response)
         return auth_response.session.valid
     
@@ -63,7 +64,7 @@ class PiHole():
         auth_data = PiHoleAuth(**response)
         self.config.csrf = auth_data.session.csrf
         self.config.sid = auth_data.session.sid
-        await self.hass.config_entries.async_update_entry(self.entry, data=self.config.model_dump(by_alias=True))
+        self.hass.config_entries.async_update_entry(self.entry, data=self.config.model_dump(by_alias=True))
     
     async def update_data(self, key: str, data: BaseModel) -> None:
         if key in self.data:
