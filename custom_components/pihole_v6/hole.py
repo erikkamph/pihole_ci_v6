@@ -47,7 +47,6 @@ class PiHole():
             }
         }
         response = await self(request, skip_status=True)
-        _LOGGER.error(response)
         auth_response = PiHoleAuth(**response)
         return auth_response.session.valid
     
@@ -118,7 +117,9 @@ class PiHole():
         await self.update_data("statistics", summary)
 
     async def toggle(self, blocking: bool = True, timer: int = None):
-        await self.verify_or_update_session()
+        if not await self.verify_session():
+            await self.update_session()
+        
         request = {
             'method': 'POST',
             'request': {

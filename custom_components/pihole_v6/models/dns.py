@@ -13,7 +13,7 @@ class BlockingEnum(str, Enum):
 
 class PiHoleDnsBlocking(BaseModel):
     blocking: BlockingEnum
-    timer: Optional[int] = Field(default=None)
+    timer: Optional[float] = Field(default=None)
     took: float
 
     @property

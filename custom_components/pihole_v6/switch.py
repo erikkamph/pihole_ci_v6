@@ -46,11 +46,12 @@ class ToggleHole(PiHoleEntity, SwitchEntity):
         self._idx = idx
         self._name = "Pi-Hole"
         self.device = PiHole(hass, config)
-        super().__init__(coordinator, self._name, self.unique_id, config)
+        super().__init__(coordinator, self._name, self.unique_id, config.data)
 
     @callback
     def _handle_coordinator_update(self) -> None:
-        blocking = PiHoleDnsBlocking(**self.coordinator.data[self._idx]['blocking'])
+        _LOGGER.error(self.coordinator.data)
+        blocking = PiHoleDnsBlocking(**self.coordinator.data['blocking'])
         self.is_on = blocking.is_blocking
         self.async_write_ha_state()
 

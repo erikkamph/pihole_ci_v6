@@ -17,11 +17,27 @@ from .models.config import PiHoleConfig
 from .hole import PiHole
 from .data import PiHoleData
 from .exceptions import HoleException
+from .models.const import (CONF_SID, CONF_CSRF)
+from homeassistant.const import CONF_API_KEY
+from typing import Any
+from homeassistant.helpers.redact import async_redact_data
 
 _LOGGER = logging.getLogger(__name__)
 platforms = [
     Platform.SWITCH
 ]
+TO_REDACT = [
+    CONF_SID,
+    CONF_CSRF,
+    CONF_API_KEY
+]
+
+
+async def async_get_config_entry_diagnostics(hass: HomeAssistant, entry: ConfigEntry) -> dict[str, Any]:
+    return {
+        "entry_data": async_redact_data(entry.data, TO_REDACT),
+        "data": entry.runtime_data.coordinator.data
+    }
 
 
 async def async_setup(hass: HomeAssistant, entry: ConfigEntry):
