@@ -6,6 +6,7 @@ from .const import (
 )
 from validators import url
 from typing import Any, Optional
+from homeassistant.exceptions import ServiceValidationError
 from homeassistant.const import (
     CONF_HOST,
     CONF_LOCATION,
@@ -45,23 +46,23 @@ class PiHoleConfig(BaseModel):
     def validate(cls, data: Any):
         if isinstance(data, dict):
             if CONF_SCHEMA not in data:
-                raise ValueError('Missing schema!')
+                raise ServiceValidationError('Missing schema')
             
             if CONF_HOST not in data:
-                raise ValueError('Hostname, url or IP needs to be supplied!')
+                raise ServiceValidationError('Hostname, url or IP needs to be supplied!')
             
             if CONF_PORT not in data:
-                raise ValueError('Port needs to be supplied, even if https or http!')
+                raise ServiceValidationError('Port needs to be supplied, even if https or http!')
 
             if CONF_LOCATION not in data:
-                raise ValueError('Location needs to be supplied!')
+                raise ServiceValidationError('Location needs to be supplied!')
             
             if CONF_API_KEY not in data:
-                raise ValueError('You need to supply an api key or a password to access pihole data!')
+                raise ServiceValidationError('You need to supply an api key or a password to access pihole data!')
             
             hole_url = f"{data[CONF_SCHEMA]}://{data[CONF_HOST]}:{data[CONF_PORT]}/{data[CONF_LOCATION]}"
             
             if not url(hole_url):
-                raise ValueError('The supplied parameters schema, host, port and location needs to make up a valid url')
+                raise ServiceValidationError('The supplied parameters schema, host, port and location needs to make up a valid url')
         return data
 
