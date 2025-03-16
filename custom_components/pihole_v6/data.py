@@ -4,11 +4,9 @@ from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
 
 class PiHoleData(object):
-    api: PiHole
     coordinator: DataUpdateCoordinator[None]
     config: PiHoleConfig
 
-    def __init__(self, api: PiHole, coordinator: DataUpdateCoordinator[None], config: PiHoleConfig):
-        self.api = api
+    def __init__(self, coordinator: DataUpdateCoordinator[None], config: PiHoleConfig):
         self.coordinator = coordinator
         self.config = config

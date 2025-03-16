@@ -6,8 +6,8 @@ import voluptuous as vol
 from homeassistant.components.switch import SwitchEntity
 from homeassistant.core import callback
 
-from .models.dns import PiHoleDnsBlocking
-from .entity import PiHoleEntity
+from uuid import uuid4
+from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.config_entries import ConfigEntry
@@ -16,6 +16,7 @@ from homeassistant.helpers import config_validation as cv
 from .models.const import (
     SERVICE_DISABLE,
     SERVICE_DISABLE_ATTR_DURATION,
+    DOMAIN
 )
 from .hole import PiHole
 
@@ -25,8 +26,10 @@ _LOGGER = logging.getLogger(__name__)
 async def async_setup_entry(hass: HomeAssistant,
                             entry: ConfigEntry,
                             async_add_entities: AddEntitiesCallback):
-    switches = [ToggleHole(hass, entry)]
+    switches = [ToggleHole(hass, entry, 0)]
+
     async_add_entities(switches)
+    hass.data[DOMAIN][entry.entry_id].extend(switches)
 
     platform = async_get_current_platform()
     platform.async_register_entity_service(
@@ -40,18 +43,17 @@ async def async_setup_entry(hass: HomeAssistant,
     )
     
 
-class ToggleHole(PiHoleEntity, SwitchEntity):
-    def __init__(self, hass: HomeAssistant, config: ConfigEntry):
+class ToggleHole(CoordinatorEntity, SwitchEntity):
+    def __init__(self, hass: HomeAssistant, config: ConfigEntry, idx: int):
         self._is_on = True
+        self._idx = idx
         self._name = "Pi-Hole"
         self.device = PiHole(hass, config)
-        self._api = config.runtime_data.api
-        super().__init__(config.runtime_data.coordinator, config.runtime_data.config.name, self._server_unique_id, config.data)
+        super().__init__(config.runtime_data.coordinator, context=self._idx)
 
     @callback
     def _handle_coordinator_update(self) -> None:
-        _LOGGER.error(self.coordinator.data)
-        blocking = self._api.data['blocking']
+        blocking = self.coordinator.data['blocking']
         self._is_on = blocking.is_blocking
         self.async_write_ha_state()
     
@@ -65,7 +67,7 @@ class ToggleHole(PiHoleEntity, SwitchEntity):
     
     @property
     def unique_id(self) -> str:
-        return f"{self._attr_unique_id}/Switch"
+        return f"{str(uuid4())}/Switch"
     
     @property
     def is_on(self) -> bool:
