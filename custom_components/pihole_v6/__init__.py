@@ -24,7 +24,8 @@ from homeassistant.helpers.redact import async_redact_data
 
 _LOGGER = logging.getLogger(__name__)
 platforms = [
-    Platform.SWITCH
+    Platform.SWITCH,
+    Platform.SENSOR
 ]
 TO_REDACT = [
     CONF_SID,

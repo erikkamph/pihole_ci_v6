@@ -25,7 +25,7 @@ _LOGGER = logging.getLogger(__name__)
 async def async_setup_entry(hass: HomeAssistant,
                             entry: ConfigEntry,
                             async_add_entities: AddEntitiesCallback):
-    switches = [ToggleHole(entry.runtime_data.coordinator, 0, hass, entry)]
+    switches = [ToggleHole(hass, entry)]
     async_add_entities(switches)
 
     platform = async_get_current_platform()
@@ -41,13 +41,12 @@ async def async_setup_entry(hass: HomeAssistant,
     
 
 class ToggleHole(PiHoleEntity, SwitchEntity):
-    def __init__(self, coordinator, idx, hass, config):
+    def __init__(self, hass: HomeAssistant, config: ConfigEntry):
         self._is_on = True
-        self._idx = idx
         self._name = "Pi-Hole"
         self.device = PiHole(hass, config)
         self._api = config.runtime_data.api
-        super().__init__(coordinator, self._name, self.unique_id, config.data)
+        super().__init__(config.runtime_data.coordinator, config.runtime_data.config.name, self._server_unique_id, config.data)
 
     @callback
     def _handle_coordinator_update(self) -> None:
