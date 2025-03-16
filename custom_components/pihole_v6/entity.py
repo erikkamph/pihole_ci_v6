@@ -12,10 +12,10 @@ from .models.const import DOMAIN
 
 class PiHoleEntity(CoordinatorEntity[DataUpdateCoordinator[None]]):
     def __init__(self,
-                 coordinator: DataUpdateCoordinator[None],
-                 name: str,
-                 server_unique_id: str,
-                 device_config: dict):
+                coordinator: DataUpdateCoordinator[None],
+                name: str,
+                server_unique_id: str,
+                device_config: dict):
         super().__init__(coordinator)
         self.config = PiHoleConfig(**device_config)
         self._name = name

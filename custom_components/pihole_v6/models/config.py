@@ -15,6 +15,9 @@ from homeassistant.const import (
     CONF_NAME,
     CONF_API_KEY
 )
+import logging
+
+_LOGGER = logging.getLogger(__name__)
 
 
 class PiHoleConfig(BaseModel):

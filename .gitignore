@@ -180,3 +180,8 @@ cython_debug/
 
 # Built Visual Studio Code Extensions
 *.vsix
+
+development/ha
+development/ha/**
+development/pihole
+development/pihole/**

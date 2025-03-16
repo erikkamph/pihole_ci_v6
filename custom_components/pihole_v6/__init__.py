@@ -87,7 +87,3 @@ async def async_unload_entry(hass: HomeAssistant, config: ConfigEntry):
 
 async def async_remove_entry(hass: HomeAssistant, config: ConfigEntry):
     await hass.config_entries.async_remove(config.entry_id)
-
-
-async def async_remove_config_entry_device(hass: HomeAssistant, config: ConfigEntry, device_entry: DeviceEntry) -> bool:
-    return True

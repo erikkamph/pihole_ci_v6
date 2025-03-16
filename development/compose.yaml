@@ -14,8 +14,7 @@ services:
       TZ: Europe/Stockholm
     restart: unless-stopped
     volumes:
-      - ../config:/config
-      - ../custom_components:/config/custom_components:ro
+      - ./ha:/config
     develop:
       watch:
         - path: ./custom_components/hole
@@ -24,5 +23,20 @@ services:
     privileged: true
     networks:
       - default
+    links:
+      - pihole
+    depends_on:
+      - pihole
     ports:
       - 80:8123
+  pihole:
+    hostname: pi.hole
+    container_name: pi.hole
+    image: "pihole/pihole:latest"
+    environment:
+      TZ: Europe/Stockholm
+      FTLCONF_webserver_api_password: ${PIHOLE_FTL_PASSWORD:-correct horse battery staple}
+    ports:
+      - 8080:80/tcp
+    volumes:
+      - ./pihole:/etc/pihole
