@@ -5,6 +5,7 @@ from .models.config import PiHoleConfig
 from .models.auth import PiHoleAuth
 from .models.const import HEADER_CSRF, HEADER_SID
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
+from homeassistant.helpers.importlib import async_import_module
 from .exceptions import HoleException
 from pydantic import BaseModel
 from .models.summary import PiHoleSummary
@@ -113,6 +114,7 @@ class PiHole():
         }
         response = await self(call=request)
         summary = PiHoleSummary(**response).model_dump()
+        await async_import_module(self.hass, "tzdata")
         df = pd.json_normalize(summary, sep='.')
         data = df.to_dict(orient='records')[0]
         await self.update_data("statistics", data)

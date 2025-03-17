@@ -1,8 +1,9 @@
 from homeassistant.core import callback
 from homeassistant.components.sensor import SensorEntity, SensorEntityDescription
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
+from homeassistant.helpers.importlib import async_import_module
 from ...exceptions import HoleException
-import logging
+import logging, asyncio
 from uuid import uuid4
 
 
