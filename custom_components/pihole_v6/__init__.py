@@ -13,6 +13,9 @@ from .models.const import (CONF_SID, CONF_CSRF)
 from homeassistant.const import CONF_API_KEY
 from typing import Any
 from homeassistant.helpers.redact import async_redact_data
+from homeassistant.helpers import config_validation as cv
+
+CONFIG_SCHEMA = cv.platform_only_config_schema
 
 _LOGGER = logging.getLogger(__name__)
 platforms = [
