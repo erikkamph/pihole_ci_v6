@@ -48,6 +48,27 @@
             },
             "web": {
                 "name": "Pi-Hole web version"
+            },
+            "queries_total": {
+                "name": "Total queries"
+            },
+            "queries_blocked": {
+                "name": "Blocked queries"
+            },
+            "queries_unique_domains": {
+                "name": "Unique domains"
+            },
+            "queries_percent_blocked": {
+                "name": "Percentage of ads blocked"
+            },
+            "clients_active": {
+                "name": "Active clients"
+            },
+            "clients_total": {
+                "name": "Total clients"
+            },
+            "gravity_domains_being_blocked": {
+                "name": "Domains blocked by Gravity"
             }
         }
     }
