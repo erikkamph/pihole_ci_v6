@@ -28,13 +28,7 @@ class PiHoleVersionSensor(CoordinatorEntity, SensorEntity):
             case "ftl": self._state = state.version.ftl.local.version
             case "web": self._state = state.version.web.local.version
             case _: raise ValueError("Incorrect index was given")
-        await self.async_update_ha_state()
-    
-    async def async_update(self):
-        device = PiHole(self.hass, self._config)
-        await device.update_versions()
-        data = device.data['versions']
-        await self.set_state(data)
+        self.async_write_ha_state()
 
     @callback
     def _handle_coordinator_update(self) -> None:

@@ -53,10 +53,6 @@ async def async_setup_entry(hass: HomeAssistant, config: ConfigEntry):
 
 
 async def async_unload_entry(hass: HomeAssistant, config: ConfigEntry):
-    await hass.config_entries.async_unload_platforms(config, platforms)
-
-    entities = config.runtime_data.entities
-    for entity in entities:
-        await entity.async_remove(force_remove=True)
-
-    return await hass.config_entries.async_unload(config.entry_id)
+    for entity in config.runtime_data.entities:
+        await entity.async_remove()
+    return await hass.config_entries.async_unload_platforms(config, platforms)

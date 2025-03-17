@@ -10,6 +10,7 @@ from pydantic import BaseModel
 from .models.summary import PiHoleSummary
 from .models.dns import PiHoleDnsBlocking
 from .models.version import PiHoleVersionInfo
+import pandas as pd
 
 
 class PiHole():
@@ -63,7 +64,7 @@ class PiHole():
         self.config.sid = auth_data.session.sid
         self.hass.config_entries.async_update_entry(self.entry, data=self.config.model_dump(by_alias=True))
     
-    async def update_data(self, key: str, data: BaseModel) -> None:
+    async def update_data(self, key: str, data: BaseModel | dict) -> None:
         if key in self.data:
             self.data[key] = data
         else:
@@ -111,8 +112,10 @@ class PiHole():
             }
         }
         response = await self(call=request)
-        summary = PiHoleSummary(**response)
-        await self.update_data("statistics", summary)
+        summary = PiHoleSummary(**response).model_dump()
+        df = pd.json_normalize(summary, sep='.')
+        data = df.to_dict(orient='records')[0]
+        await self.update_data("statistics", data)
 
     async def toggle(self, blocking: bool = True, timer: int = None):
         if not await self.verify_session():
