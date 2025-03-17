@@ -2,15 +2,16 @@ from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.components.binary_sensor import BinarySensorDeviceClass, BinarySensorEntity
 from homeassistant.config_entries import ConfigEntry
+from uuid import uuid4
 
 
 class PiHoleBlockingSensor(CoordinatorEntity, BinarySensorEntity):
-    def __init__(self, hass: HomeAssistant, config: ConfigEntry, idx: int):
+    def __init__(self, config: ConfigEntry, idx: int):
         self._config = config
-        self._hass = hass
         self._is_on: bool | None = True
         self._name = "Pi-Hole Blocking"
         self._idx = idx
+        self._attr_unique_id = f"{uuid4()}-BinarySensor"
         super().__init__(self._config.runtime_data.coordinator, self._idx)
 
     @callback
@@ -29,7 +30,7 @@ class PiHoleBlockingSensor(CoordinatorEntity, BinarySensorEntity):
     
     @property
     def unique_id(self):
-        return f"{self._attr_unique_id}/BinarySensor"
+        return self._attr_unique_id
     
     @property
     def name(self):

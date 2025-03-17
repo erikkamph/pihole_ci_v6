@@ -11,8 +11,6 @@ from .models.summary import PiHoleSummary
 from .models.dns import PiHoleDnsBlocking
 from .models.version import PiHoleVersionInfo
 
-_LOGGER = logging.getLogger(__name__)
-
 
 class PiHole():
     def __init__(self, hass: HomeAssistant, config: ConfigEntry):

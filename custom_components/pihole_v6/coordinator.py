@@ -7,6 +7,7 @@ import logging, async_timeout
 from datetime import timedelta
 from .exceptions import HoleException
 from homeassistant.exceptions import ConfigEntryAuthFailed
+from .models.const import MIN_TIME_BETWEEN_UPDATES
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -18,7 +19,7 @@ class PiHoleUpdateCoordinator(DataUpdateCoordinator):
             _LOGGER,
             config_entry=config,
             name=config.data[CONF_NAME],
-            update_interval=timedelta(seconds=30),
+            update_interval=MIN_TIME_BETWEEN_UPDATES,
             always_update=True
         )
         self._device: PiHole | None

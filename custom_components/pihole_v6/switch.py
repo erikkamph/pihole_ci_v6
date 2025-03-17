@@ -29,7 +29,7 @@ async def async_setup_entry(hass: HomeAssistant,
     switches = [ToggleHole(hass, entry, 0)]
 
     async_add_entities(switches)
-    hass.data[DOMAIN][entry.entry_id].extend(switches)
+    entry.runtime_data.entities = switches
 
     platform = async_get_current_platform()
     platform.async_register_entity_service(

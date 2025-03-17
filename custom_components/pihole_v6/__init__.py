@@ -40,15 +40,10 @@ async def async_setup(hass: HomeAssistant, entry: ConfigEntry):
 
 async def async_setup_entry(hass: HomeAssistant, config: ConfigEntry):
     try:
-        if DOMAIN not in hass.data:
-            hass.data[DOMAIN] = {}
-
-        hass.data[DOMAIN][config.entry_id] = []
         coordinator = PiHoleUpdateCoordinator(hass, config)
 
         await coordinator.async_config_entry_first_refresh()
         config.runtime_data = PiHoleData(coordinator, PiHoleConfig(**config.data))
-        
 
         await hass.config_entries.async_forward_entry_setups(config, platforms)
         return True
@@ -60,18 +55,8 @@ async def async_setup_entry(hass: HomeAssistant, config: ConfigEntry):
 async def async_unload_entry(hass: HomeAssistant, config: ConfigEntry):
     await hass.config_entries.async_unload_platforms(config, platforms)
 
-    entities = hass.data.get(DOMAIN, {}).get(config.entry_id, [])
+    entities = config.runtime_data.entities
     for entity in entities:
         await entity.async_remove(force_remove=True)
 
     return await hass.config_entries.async_unload(config.entry_id)
-
-
-async def async_remove_entry(hass: HomeAssistant, config: ConfigEntry):
-    await hass.config_entries.async_unload_platforms(config, platforms)
-
-    for entity in hass.data.get(DOMAIN, {}).get(config.entry_id, []):
-        await entity.async_remove(force_remove=True)
-
-    await hass.config_entries.async_remove(config.entry_id)
-    return True
