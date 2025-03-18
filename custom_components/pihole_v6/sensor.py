@@ -48,16 +48,16 @@ statistic_sensors = {
 
 async def async_setup_entry(hass: HomeAssistant, config: ConfigEntry, async_add_entities: AddEntitiesCallback):
     sensors = []
-    sensors.append(PiHoleBlockingSensor(config, 0))
+    sensors.append(PiHoleBlockingSensor(hass, config, 0))
 
     version_sensors = ["core", "web", "ftl"]
     for sensor in version_sensors:
-        sensors.append(PiHoleVersionSensor(config, sensor, 0))
+        sensors.append(PiHoleVersionSensor(hass, config, sensor, 0))
 
     coordinator = config.runtime_data.coordinator
     for key in statistic_sensors.keys():
         description = SensorEntityDescription(**statistic_sensors[key])
-        sensors.append(PiHoleStatisticSensor(coordinator, 0, key, description))
+        sensors.append(PiHoleStatisticSensor(coordinator, 0, key, description, config, hass))
 
     if sensors not in config.runtime_data.entities:
         async_add_entities(sensors)

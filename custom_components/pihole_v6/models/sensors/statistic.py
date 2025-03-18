@@ -1,24 +1,20 @@
-from homeassistant.core import callback
+from homeassistant.core import callback, HomeAssistant
 from homeassistant.components.sensor import SensorEntity, SensorEntityDescription
-from homeassistant.helpers.update_coordinator import CoordinatorEntity
-from homeassistant.helpers.importlib import async_import_module
+from homeassistant.config_entries import ConfigEntry
 from ...exceptions import HoleException
-import logging, asyncio
-from uuid import uuid4
+from ...entity import PiHoleEntity
 
 
-_LOGGER = logging.getLogger(__name__)
-
-class PiHoleStatisticSensor(CoordinatorEntity, SensorEntity):
-    def __init__(self, coordinator, context, statistic_path: str, description: SensorEntityDescription):
+class PiHoleStatisticSensor(PiHoleEntity, SensorEntity):
+    def __init__(self, coordinator, context, statistic_path: str, description: SensorEntityDescription, config: ConfigEntry, hass: HomeAssistant):
         self._name = description.name
         self._attr_available = False
         self._keyword = 'statistics'
         self._native_value = None
         self._statistic_path = statistic_path
         self.entity_description = description
-        self._attr_unique_id = f"{uuid4()}-{self.entity_description.key}-Sensor"
-        super().__init__(coordinator, context)
+        self._attr_unique_id = f"{config.entry_id}-{self.entity_description.key}-Sensor"
+        super().__init__(coordinator, self._name, config.entry_id, config, hass, context)
 
     @callback
     def _handle_coordinator_update(self):

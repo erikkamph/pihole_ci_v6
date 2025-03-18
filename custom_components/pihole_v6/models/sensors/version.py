@@ -1,17 +1,16 @@
 from homeassistant.components.sensor import SensorEntity, SensorEntityDescription
 from homeassistant.core import callback, HomeAssistant
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from uuid import uuid4
 import logging, asyncio
-from ...hole import PiHole
 from ..version import PiHoleVersionInfo
+from ...entity import PiHoleEntity
 
 _LOGGER = logging.getLogger(__name__)
 
 
-class PiHoleVersionSensor(CoordinatorEntity, SensorEntity):
-    def __init__(self, config: ConfigEntry, keyword: str, idx: int):
+class PiHoleVersionSensor(PiHoleEntity, SensorEntity):
+    def __init__(self, hass: HomeAssistant, config: ConfigEntry, keyword: str, idx: int):
         self._idx = idx
         self._keyword = keyword
         self._name = keyword.upper() + " local version".title() if keyword == "ftl" else f"{keyword} local version".title()
@@ -19,8 +18,8 @@ class PiHoleVersionSensor(CoordinatorEntity, SensorEntity):
         self._config = config
         self.entity_description = SensorEntityDescription(key=keyword, translation_key=keyword)
         self._attr_available = False
-        self._attr_unique_id = f"{uuid4()}-{self.entity_description.key}-Sensor"
-        super().__init__(config.runtime_data.coordinator, context=self._idx)
+        self._attr_unique_id = f"{config.entry_id}-{self.entity_description.key}-Sensor"
+        super().__init__(config.runtime_data.coordinator, self._name, server_unique_id=config.entry_id, config_entry=config, hass=hass, context=self._idx)
 
     async def set_state(self, state: PiHoleVersionInfo):
         match self._keyword:

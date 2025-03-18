@@ -7,7 +7,7 @@ from homeassistant.components.switch import SwitchEntity
 from homeassistant.core import callback
 
 from uuid import uuid4
-from homeassistant.helpers.update_coordinator import CoordinatorEntity
+from .entity import PiHoleEntity
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.config_entries import ConfigEntry
@@ -43,13 +43,13 @@ async def async_setup_entry(hass: HomeAssistant,
     )
     
 
-class ToggleHole(CoordinatorEntity, SwitchEntity):
+class ToggleHole(PiHoleEntity, SwitchEntity):
     def __init__(self, hass: HomeAssistant, config: ConfigEntry, idx: int):
         self._is_on = True
         self._idx = idx
         self._name = "Pi-Hole"
         self.device = PiHole(hass, config)
-        super().__init__(config.runtime_data.coordinator, context=self._idx)
+        super().__init__(config.runtime_data.coordinator, name=self._name, server_unique_id=config.entry_id, config_entry=config, context=self._idx, hass=hass)
 
     @callback
     def _handle_coordinator_update(self) -> None:
@@ -67,7 +67,7 @@ class ToggleHole(CoordinatorEntity, SwitchEntity):
     
     @property
     def unique_id(self) -> str:
-        return f"{str(uuid4())}/Switch"
+        return f"{self.device.entry.entry_id}/Switch"
     
     @property
     def is_on(self) -> bool:
