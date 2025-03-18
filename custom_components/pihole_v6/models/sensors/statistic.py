@@ -13,7 +13,7 @@ class PiHoleStatisticSensor(PiHoleEntity, SensorEntity):
         self._native_value = None
         self._statistic_path = statistic_path
         self.entity_description = description
-        self._attr_unique_id = f"{config.entry_id}-{self.entity_description.key}-Sensor"
+        self._attr_unique_id = f"{config.entry_id}/{self.entity_description.key}"
         super().__init__(coordinator, self._name, config.entry_id, config, hass, context)
 
     @callback

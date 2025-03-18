@@ -2,9 +2,11 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.components.sensor import SensorEntityDescription
+from homeassistant.components.binary_sensor import BinarySensorEntityDescription
 from .models.sensors.version import PiHoleVersionSensor
 from .models.sensors.blocking import PiHoleBlockingSensor
 from .models.sensors.statistic import PiHoleStatisticSensor
+from .models.sensors.binary_statistic import PiHoleBinaryStatistic
 from .models.const import DOMAIN
 
 statistic_sensors = {
@@ -33,15 +35,23 @@ statistic_sensors = {
         "key": "percentage_blocked",
         "name": "Percentage of queries blocked"
     },
+    "cache.size": {
+        "translation_key": "cache_size",
+        "key": "cache_size",
+        "name": "Cache size"
+    }
+}
+
+binary_statistic_sensor = {
     "config.dhcp_active": {
         "translation_key": "dhcp_active",
         "key": "dhcp_active",
         "name": "DHCP Active"
     },
-    "cache.size": {
-        "translation_key": "cache_size",
-        "key": "cache_size",
-        "name": "Cache size"
+    "config.dns_dnssec": {
+        "translation_key": "dnssec",
+        "key": "dnssec",
+        "name": "DNSSEC enabled"
     }
 }
 
@@ -58,6 +68,10 @@ async def async_setup_entry(hass: HomeAssistant, config: ConfigEntry, async_add_
     for key in statistic_sensors.keys():
         description = SensorEntityDescription(**statistic_sensors[key])
         sensors.append(PiHoleStatisticSensor(coordinator, 0, key, description, config, hass))
+
+    for key in binary_statistic_sensor.keys():
+        description = BinarySensorEntityDescription(**binary_statistic_sensor[key])
+        sensors.append(PiHoleBinaryStatistic(coordinator, config.entry_id, config, hass, key, description, 0))
 
     if sensors not in config.runtime_data.entities:
         async_add_entities(sensors)

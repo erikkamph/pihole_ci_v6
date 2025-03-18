@@ -5,6 +5,7 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.exceptions import ConfigEntryNotReady
 from homeassistant.helpers.redact import async_redact_data
 from homeassistant.components import system_health
+from homeassistant.helpers.device_registry import DeviceEntry
 from typing import Any
 from .coordinator import PiHoleUpdateCoordinator
 from .models.config import PiHoleConfig
@@ -15,7 +16,8 @@ from .hole import PiHole
 _LOGGER = logging.getLogger(__name__)
 platforms = [
     Platform.SWITCH,
-    Platform.SENSOR
+    Platform.SENSOR,
+    Platform.UPDATE
 ]
 TO_REDACT = [
     CONF_SID,
@@ -66,3 +68,7 @@ async def async_unload_entry(hass: HomeAssistant, config: ConfigEntry):
     for entity in config.runtime_data.entities:
         await entity.async_remove()
     return await hass.config_entries.async_unload_platforms(config, platforms)
+
+
+async def async_remove_config_entry_device(hass: HomeAssistant, config: ConfigEntry, device: DeviceEntry):
+    return True
