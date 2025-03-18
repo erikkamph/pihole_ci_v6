@@ -30,7 +30,7 @@ class PiHoleUpdateCoordinator(DataUpdateCoordinator):
     
     async def _async_update_data(self):
         try:
-            async with async_timeout.timeout(10):
+            async with async_timeout.timeout(30):
                 if not await self._device.verify_session():
                     await self._device.update_session()
                 

@@ -1,19 +1,16 @@
-from homeassistant.core import HomeAssistant
+import logging
+from homeassistant.const import Platform, CONF_API_KEY, CONF_HOST
+from homeassistant.core import HomeAssistant, callback
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.exceptions import ConfigEntryNotReady
-from homeassistant.const import Platform
-import logging
-from .coordinator import PiHoleUpdateCoordinator
-from .models.const import (
-    DOMAIN
-)
-from .models.config import PiHoleConfig
-from .data import PiHoleData
-from .models.const import (CONF_SID, CONF_CSRF)
-from homeassistant.const import CONF_API_KEY, CONF_HOST
-from typing import Any
 from homeassistant.helpers.redact import async_redact_data
-from homeassistant.helpers import config_validation as cv
+from homeassistant.components import system_health
+from typing import Any
+from .coordinator import PiHoleUpdateCoordinator
+from .models.config import PiHoleConfig
+from .models.const import (CONF_SID, CONF_CSRF, DOMAIN)
+from .data import PiHoleData
+from .hole import PiHole
 
 _LOGGER = logging.getLogger(__name__)
 platforms = [
@@ -26,8 +23,18 @@ TO_REDACT = [
     CONF_API_KEY
 ]
 
+@callback
+def async_register(hass: HomeAssistant, register: system_health.SystemHealthRegistration) -> None:
+    register.async_register_info(system_health_info)
+
+
 async def system_health_info(hass: HomeAssistant) -> dict[str, Any]:
-    pass
+    config_entry: ConfigEntry = hass.config_entries.async_entries(DOMAIN)[0]
+    api = PiHole(hass, config_entry)
+    
+    return {
+        "can_reach_server": system_health.async_check_can_reach_url(hass, api.config.api_url)
+    }
 
 
 async def async_get_config_entry_diagnostics(hass: HomeAssistant, entry: ConfigEntry) -> dict[str, Any]:

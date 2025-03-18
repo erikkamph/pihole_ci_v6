@@ -65,5 +65,10 @@
                 "name": "Procent av frågor blockerade"
             }
         }
+    },
+    "system_health": {
+        "info": {
+            "can_reach_server": "Kan nå Pi-Hole"
+        }
     }
 }

@@ -10,16 +10,13 @@ from uuid import uuid4
 _LOGGER = logging.getLogger(__name__)
 
 class PiHoleStatisticSensor(CoordinatorEntity, SensorEntity):
-    def __init__(self, coordinator, context, name: str, statistic_path: str):
-        self._name = name
+    def __init__(self, coordinator, context, statistic_path: str, description: SensorEntityDescription):
+        self._name = description.name
         self._attr_available = False
         self._keyword = 'statistics'
         self._native_value = None
         self._statistic_path = statistic_path
-        self.entity_description = SensorEntityDescription(
-            key=statistic_path.replace(".", "_"),
-            translation_key=statistic_path.replace(".", "_")
-        )
+        self.entity_description = description
         self._attr_unique_id = f"{uuid4()}-{self.entity_description.key}-Sensor"
         super().__init__(coordinator, context)
 
@@ -34,9 +31,9 @@ class PiHoleStatisticSensor(CoordinatorEntity, SensorEntity):
             raise HoleException(f'Failed to update entity {self._attr_unique_id}')
 
     @property
-    def name(self):
-        return self._name
-
-    @property
     def native_value(self):
         return self._native_value
+    
+    @property
+    def name(self):
+        return self._name

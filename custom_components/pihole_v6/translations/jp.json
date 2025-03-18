@@ -65,5 +65,10 @@
                 "name": "ブロックされたクエリの割合"
             }
         }
+    },
+    "system_health": {
+        "info": {
+            "can_reach_server": "パイホールまで到達可能"
+        }
     }
 }

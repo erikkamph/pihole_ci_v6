@@ -65,5 +65,10 @@
                 "name": "Percentage of queries blocked"
             }
         }
+    },
+    "system_health": {
+        "info": {
+            "can_reach_server": "Can reach Pi-Hole"
+        }
     }
 }
