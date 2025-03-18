@@ -1,6 +1,6 @@
 {
     "name": "Pi-Hole V6 (Dev)",
-    "filename": "piholev6dev.zip",
+    "filename": "pihole_v6.zip",
     "hide_default_branch": true,
     "hacs": "2.0.0",
     "country": "SE",
