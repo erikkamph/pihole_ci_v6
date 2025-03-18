@@ -32,4 +32,4 @@ class Version(BaseModel):
 class PiHoleVersionInfo(BaseModel):
     version: Optional[Version] = Field(default=None)
     docker: Optional[Docker] = Field(default=None)
-    took: float
+    took: Optional[float] = Field(default=None)

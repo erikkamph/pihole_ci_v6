@@ -7,13 +7,11 @@ from .models.sensors.statistic import PiHoleStatisticSensor
 from .models.const import DOMAIN
 
 statistic_sensors = {
-    "queries.total": "Total Queries",
-    "queries.blocked": "Blocked Queries",
-    "queries.unique_domains": "Unique Domains",
-    "queries.percent_blocked": "Percentage of ads blocked",
-    "clients.active": "Number of active clients",
-    "clients.total": "Total number of seen clients",
-    "gravity.domains_being_blocked": "Domains being blocked by gravity lists"
+    "active_clients": "Active clients",
+    "gravity_size": "Domains blocked by Gravity",
+    "queries.total": "Queries made last 24h",
+    "queries.blocked": "Blocked queries last 24h",
+    "queries.percent_blocked": "Percentage of queries blocked"
 }
 
 

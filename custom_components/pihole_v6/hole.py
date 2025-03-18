@@ -105,10 +105,13 @@ class PiHole():
         request = {
             'method': 'GET',
             'request': {
-                'url': f'{self.config.api_url}stats/summary',
+                'url': f'{self.config.api_url}padd',
                 'headers': {
                     HEADER_SID: self.config.sid,
                     HEADER_CSRF: self.config.csrf
+                },
+                "json": {
+                    "full": True
                 }
             }
         }

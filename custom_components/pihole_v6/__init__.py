@@ -10,7 +10,7 @@ from .models.const import (
 from .models.config import PiHoleConfig
 from .data import PiHoleData
 from .models.const import (CONF_SID, CONF_CSRF)
-from homeassistant.const import CONF_API_KEY
+from homeassistant.const import CONF_API_KEY, CONF_HOST
 from typing import Any
 from homeassistant.helpers.redact import async_redact_data
 from homeassistant.helpers import config_validation as cv
@@ -26,6 +26,9 @@ TO_REDACT = [
     CONF_API_KEY
 ]
 
+async def system_health_info(hass: HomeAssistant) -> dict[str, Any]:
+    pass
+
 
 async def async_get_config_entry_diagnostics(hass: HomeAssistant, entry: ConfigEntry) -> dict[str, Any]:
     return {
@@ -35,7 +38,6 @@ async def async_get_config_entry_diagnostics(hass: HomeAssistant, entry: ConfigE
 
 
 async def async_setup(hass: HomeAssistant, entry: ConfigEntry):
-    hass.states.async_set(f"{DOMAIN}.state", "initialized")
     return True
 
 
@@ -48,9 +50,9 @@ async def async_setup_entry(hass: HomeAssistant, config: ConfigEntry):
 
         await hass.config_entries.async_forward_entry_setups(config, platforms)
         return True
-    except ConfigEntryNotReady as ex:
+    except Exception as ex:
         _LOGGER.error(ex)
-        return False
+        raise ConfigEntryNotReady(f"Error setting up host: {config.data[CONF_HOST]}") from ex
 
 
 async def async_unload_entry(hass: HomeAssistant, config: ConfigEntry):
