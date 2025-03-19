@@ -5,6 +5,17 @@ from homeassistant.components.update import UpdateEntity, UpdateEntityDescriptio
 from .entity import PiHoleEntity
 from .coordinator import PiHoleUpdateCoordinator
 
+def version_is_newer(latest_version: str | None, installed_version: str | None):
+    if not latest_version or latest_version == '':
+        return False
+    
+    if not installed_version or installed_version == '':
+        raise ValueError("Unknown version installed")
+    
+    latest = ''.join(latest_version.replace("v", "").split("."))
+    installed = ''.join(installed_version.replace("v", "").split("."))
+    return int(installed) < int(latest)
+
 
 async def async_setup_entry(hass: HomeAssistant,
                             config: ConfigEntry,
@@ -72,26 +83,14 @@ class IntegrationUpdate(PiHoleEntity, UpdateEntity):
         super().__init__(coordinator, description.name, server_unique_id, config_entry, hass, context)
         self._key = 'integration_updates'
         self._manifest_data = config_entry.runtime_data.manifest
-        self._attr_installed_version = self._manifest_data['version']
+        self._attr_installed_version = f"v{self._manifest_data['version']}"
         self._attr_unique_id = f"{server_unique_id}/{self._key}"
         self._attr_latest_version = ""
         self._attr_release_url = ""
         self._attr_available = False
 
-    def version_is_newer(self, latest_version, installed_version):
-        if not latest_version or latest_version == '':
-            return False
-        
-        if not installed_version or installed_version == '':
-            raise ValueError("Unknown version installed")
-        
-        latest = latest_version.replace("v", "").split(".")
-        installed = latest_version.replace("v", "").split(".")
-
-        for i, v in enumerate(latest):
-            if int(v) > int(installed[i]):
-                return True
-        return False
+    def version_is_newer(self, latest_version: str | None, installed_version: str | None):
+        return version_is_newer(latest_version, installed_version)
 
     @callback
     def _handle_coordinator_update(self):
@@ -168,19 +167,7 @@ class PiHoleComponentUpdate(PiHoleEntity, UpdateEntity):
             self.async_write_ha_state()
     
     def version_is_newer(self, latest_version: str | None, installed_version: str | None):
-        if latest_version is None or latest_version == '':
-            return False
-        
-        if installed_version is None or installed_version == '':
-            raise ValueError("Unknown version installed")
-
-        latest = latest_version.replace("v", "").split(".")
-        installed = installed_version.replace("v", "").split(".")
-
-        for i, v in enumerate(latest):
-            if int(installed[i]) < int(v):
-                return True
-        return False
+        return version_is_newer(latest_version, installed_version)
 
     @property
     def name(self):
