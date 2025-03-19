@@ -1,11 +1,13 @@
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
-from homeassistant.components.update import UpdateEntity, UpdateEntityDescription
+from homeassistant.helpers.aiohttp_client import async_get_clientsession
+from homeassistant.components.update import UpdateEntity, UpdateEntityDescription, UpdateEntityFeature
 from .entity import PiHoleEntity
 from .coordinator import PiHoleUpdateCoordinator
 from .hole import PiHole
-import asyncio
+import asyncio, os, shutil, zipfile, io
+from .models.const import DOMAIN
 
 
 async def async_setup_entry(hass: HomeAssistant,
@@ -45,7 +47,7 @@ async def async_setup_entry(hass: HomeAssistant,
         )
 
     integration_description = UpdateEntityDescription(
-        name="Update available (Integration)",
+        name="Pi-Hole V6",
         key="integration_update_available",
         translation_key="integration_update_available"
     )
@@ -79,7 +81,9 @@ class IntegrationUpdate(PiHoleEntity, UpdateEntity):
         self._attr_latest_version = ""
         self._attr_release_url = ""
         self._attr_available = False
+        self._attr_supported_features = (UpdateEntityFeature.RELEASE_NOTES | UpdateEntityFeature.INSTALL | UpdateEntityFeature.PROGRESS)
         self._api = PiHole(hass, config_entry)
+        self._attr_zip_url = ""
 
     def version_is_newer(self, latest_version: str | None, installed_version: str | None):
         return asyncio.run_coroutine_threadsafe(self._api.version_is_newer(latest_version, installed_version), self.hass.loop)
@@ -90,6 +94,7 @@ class IntegrationUpdate(PiHoleEntity, UpdateEntity):
             data = self.coordinator.data[self._key]
             self._attr_latest_version = data['latest_version']
             self._attr_release_url = data['release_url']
+            self._attr_zip_url = data['zip_file']
             self._attr_available = True
             self.async_write_ha_state()
 
@@ -108,6 +113,51 @@ class IntegrationUpdate(PiHoleEntity, UpdateEntity):
     @property
     def release_url(self):
         return self._attr_release_url
+    
+    async def async_release_notes(self):
+        if self._key in self.coordinator.data:
+            data = self.coordinator.data[self._key]
+            release_notes = data['release_notes']
+            return release_notes
+        return None
+    
+    @property
+    def update_percentage(self):
+        return self._attr_update_percentage
+    
+    async def backup_integration(self):
+        integration = self.hass.config.path(f'custom_components/{DOMAIN}')
+        integration_backup = f"{integration}.bak"
+        shutil.move(integration, integration_backup)
+
+    async def update_integration(self):
+        integration = self.hass.config.path(f'custom_components')
+        session = async_get_clientsession(self.hass)
+        async with session.get(self._attr_zip_url) as r:
+            zip_data = await r.read()
+        self._attr_update_percentage = 50
+        self.async_write_ha_state()
+        
+        file = zipfile.ZipFile(io.BytesIO(zip_data))
+        file.extractall(integration)
+        self._attr_update_percentage = 100
+        self.async_write_ha_state()
+
+    async def async_install_with_progress(self, version: str | None, backup: bool):
+        self._attr_in_progress = True
+        self.async_write_ha_state()
+
+        try:
+            if self._attr_zip_url != "":
+                if backup:
+                    await self.backup_integration()
+                    self._attr_update_percentage = 30
+                    self.async_write_ha_state()
+
+                await self.update_integration(version)
+        finally:
+            self._attr_in_progress = False
+            self.async_write_ha_state()
 
 
 

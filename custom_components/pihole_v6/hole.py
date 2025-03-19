@@ -132,7 +132,8 @@ class PiHole():
         data = {
             'latest_version': response['tag_name'],
             'release_url': response['html_url'],
-            'zip_file': response['assets'][0]['browser_download_url']
+            'zip_file': response['assets'][0]['browser_download_url'],
+            'release_notes': response['body']
         }
         await self.update_data('integration_updates', data)
 
