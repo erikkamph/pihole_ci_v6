@@ -1,4 +1,3 @@
-import os
 import aiofiles
 import json
 import logging
@@ -27,7 +26,7 @@ TO_REDACT = [
     CONF_CSRF,
     CONF_API_KEY
 ]
-manifest_path = os.path.join(os.path.dirname(__file__), "manifest.json")
+
 
 @callback
 def async_register(hass: HomeAssistant, register: system_health.SystemHealthRegistration) -> None:
@@ -58,6 +57,7 @@ async def async_setup_entry(hass: HomeAssistant, config: ConfigEntry):
     try:
         coordinator = PiHoleUpdateCoordinator(hass, config)
 
+        manifest_path = hass.config.path('custom_components/pihole_v6/manifest.json')
         async with aiofiles.open(manifest_path, 'r') as f:
             manifest_data = json.loads(await f.read())
 
@@ -81,9 +81,9 @@ async def async_unload_entry(hass: HomeAssistant, config: ConfigEntry):
     
     try:
         device_registry = async_get(hass)
-        device = device_registry.async_get_device(set(DOMAIN, config.entry_id))
+        device = device_registry.async_get_device(set((DOMAIN, config.entry_id)))
         device_registry.async_remove_device(device.id or "")
     except Exception as ex:
-        _LOGGER.error(str(ex), stack_info=True)
+        pass
     
     return await hass.config_entries.async_unload_platforms(config, platforms)
