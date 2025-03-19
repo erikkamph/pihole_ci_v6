@@ -11,7 +11,7 @@ services:
     container_name: homeassistant
     image: "ghcr.io/home-assistant/home-assistant:stable"
     environment:
-      TZ: Europe/Stockholm
+      TZ: ${TZ:-Europe/Stockholm}
     restart: unless-stopped
     volumes:
       - ./ha:/config
@@ -34,7 +34,7 @@ services:
     container_name: pi.hole
     image: "pihole/pihole:latest"
     environment:
-      TZ: Europe/Stockholm
+      TZ: ${TZ:-Europe/Stockholm}
       FTLCONF_webserver_api_password: ${PIHOLE_FTL_PASSWORD:-correct horse battery staple}
     ports:
       - 8080:80/tcp

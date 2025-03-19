@@ -1,0 +1,3 @@
+- [ ] Add more sensors for the different statistics.
+- [ ] Publish pihole as a module that is to be installed from pypi instead.
+- [ ] Go through the checklist for the different tiers and tick off what is done.

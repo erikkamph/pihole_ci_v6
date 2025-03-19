@@ -1,8 +1,8 @@
 ## Bronze
 - [x] `action-setup` - Service actions are registered in async_setup
 - [x] `appropriate-polling` - If it's a polling integration, set an appropriate polling interval
-- [ ] `brands` - Has branding assets available for the integration
-- [ ] `common-modules` - Place common patterns in common modules
+- [x] `brands` - Has branding assets available for the integration
+- [x] `common-modules` - Place common patterns in common modules
 - [ ] `config-flow-test-coverage` - Full test coverage for the config flow
 - [x] `config-flow` - Integration needs to be able to be set up via the UI
     - [ ] Uses `data_description` to give context to fields
@@ -12,8 +12,8 @@
 - [ ] `docs-high-level-description` - The documentation includes a high-level description of the integration brand, product, or service
 - [ ] `docs-installation-instructions` - The documentation provides step-by-step installation instructions for the integration, including, if needed, prerequisites
 - [ ] `docs-removal-instructions` - The documentation provides removal instructions
-- [ ] `entity-event-setup` - Entities event setup
-- [ ] `entity-unique-id` - Entities have a unique ID
+- [x] `entity-event-setup` - Entities event setup
+- [x] `entity-unique-id` - Entities have a unique ID
 - [ ] `has-entity-name` - Entities use has_entity_name = True
 - [ ] `runtime-data` - Use ConfigEntry.runtime_data to store runtime data
 - [ ] `test-before-configure` - Test a connection in the config flow
