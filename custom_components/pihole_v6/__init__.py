@@ -8,7 +8,7 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.exceptions import ConfigEntryNotReady
 from homeassistant.helpers.redact import async_redact_data
 from homeassistant.components import system_health
-from homeassistant.helpers.device_registry import DeviceEntry
+from homeassistant.helpers.device_registry import async_get, DeviceEntry
 from typing import Any
 from .coordinator import PiHoleUpdateCoordinator
 from .models.config import PiHoleConfig
@@ -78,8 +78,12 @@ async def async_setup_entry(hass: HomeAssistant, config: ConfigEntry):
 async def async_unload_entry(hass: HomeAssistant, config: ConfigEntry):
     for entity in config.runtime_data.entities:
         await entity.async_remove()
+    
+    try:
+        device_registry = async_get(hass)
+        device = device_registry.async_get_device(set(DOMAIN, config.entry_id))
+        device_registry.async_remove_device(device.id or "")
+    except Exception as ex:
+        _LOGGER.error(str(ex), stack_info=True)
+    
     return await hass.config_entries.async_unload_platforms(config, platforms)
-
-
-async def async_remove_config_entry_device(hass: HomeAssistant, config: ConfigEntry, device: DeviceEntry):
-    return True
