@@ -86,7 +86,7 @@ class IntegrationUpdate(PiHoleEntity, UpdateEntity):
             raise ValueError("Unknown version installed")
         
         latest = latest_version.replace("v", "").split(".")
-        installed = latest_version.replace("v", "").split("")
+        installed = latest_version.replace("v", "").split(".")
 
         for i, v in enumerate(latest):
             if int(v) > int(installed[i]):
