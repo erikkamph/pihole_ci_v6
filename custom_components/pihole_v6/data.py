@@ -7,11 +7,13 @@ class PiHoleData(object):
     _coordinator: DataUpdateCoordinator[None]
     _config: PiHoleConfig
     _entities: list[Any]
+    _manifest: dict[str, Any]
 
-    def __init__(self, coordinator: DataUpdateCoordinator[None], config: PiHoleConfig):
+    def __init__(self, coordinator: DataUpdateCoordinator[None], config: PiHoleConfig, manifest: dict[str, Any]):
         self._coordinator = coordinator
         self._config = config
         self._entities = []
+        self._manifest = manifest
 
     @property
     def coordinator(self) -> DataUpdateCoordinator[None]:
@@ -31,3 +33,7 @@ class PiHoleData(object):
             self._entities.extend(val)
         else:
             self._entities.append(val)
+
+    @property
+    def manifest(self):
+        return self._manifest

@@ -41,8 +41,83 @@ async def async_setup_entry(hass: HomeAssistant,
                 0
             )
         )
+
+    integration_description = UpdateEntityDescription(
+        name="Update available (Integration)",
+        key="integration_update_available",
+        translation_key="integration_update_available"
+    )
+    update_entities.append(
+        IntegrationUpdate(
+            config.runtime_data.coordinator,
+            config.entry_id,
+            config,
+            hass,
+            integration_description,
+            0
+        )
+    )
     config.runtime_data.entities = update_entities
     async_add_entities(update_entities)
+
+
+class IntegrationUpdate(PiHoleEntity, UpdateEntity):
+    def __init__(self,
+                 coordinator: PiHoleUpdateCoordinator,
+                 server_unique_id: str,
+                 config_entry: ConfigEntry,
+                 hass: HomeAssistant,
+                 description: UpdateEntityDescription,
+                 context = None):
+        super().__init__(coordinator, description.name, server_unique_id, config_entry, hass, context)
+        self._key = 'integration_updates'
+        self._manifest_data = config_entry.runtime_data.manifest
+        self._attr_installed_version = self._manifest_data['version']
+        self._attr_unique_id = f"{server_unique_id}/{self._key}"
+        self._attr_latest_version = ""
+        self._attr_release_url = ""
+        self._attr_available = False
+
+    def version_is_newer(self, latest_version, installed_version):
+        if not latest_version or latest_version == '':
+            return False
+        
+        if not installed_version or installed_version == '':
+            raise ValueError("Unknown version installed")
+        
+        latest = latest_version.replace("v", "").split(".")
+        installed = latest_version.replace("v", "").split("")
+
+        for i, v in enumerate(latest):
+            if int(v) > int(installed[i]):
+                return True
+        return False
+
+    @callback
+    def _handle_coordinator_update(self):
+        if self._key in self.coordinator.data:
+            data = self.coordinator.data[self._key]
+            self._attr_latest_version = data['latest_version']
+            self._attr_release_url = data['release_url']
+            self._attr_available = True
+            self.async_write_ha_state()
+
+    @property
+    def name(self):
+        return self._name
+    
+    @property
+    def latest_version(self):
+        return self._attr_latest_version
+    
+    @property
+    def installed_version(self):
+        return self._attr_installed_version
+    
+    @property
+    def release_url(self):
+        return self._attr_release_url
+
 
 
 class PiHoleComponentUpdate(PiHoleEntity, UpdateEntity):

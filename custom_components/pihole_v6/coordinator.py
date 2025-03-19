@@ -37,6 +37,7 @@ class PiHoleUpdateCoordinator(DataUpdateCoordinator):
                 await self._device.update_blocking()
                 await self._device.update_versions()
                 await self._device.update_statistics()
+                await self._device.update_integration_version()
 
                 return self._device.data
         except HoleException as err:

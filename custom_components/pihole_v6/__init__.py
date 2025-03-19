@@ -1,3 +1,5 @@
+import os
+import json
 import logging
 from homeassistant.const import Platform, CONF_API_KEY, CONF_HOST
 from homeassistant.core import HomeAssistant, callback
@@ -24,6 +26,7 @@ TO_REDACT = [
     CONF_CSRF,
     CONF_API_KEY
 ]
+manifest_path = os.path.join(os.path.dirname(__file__), "manifest.json")
 
 @callback
 def async_register(hass: HomeAssistant, register: system_health.SystemHealthRegistration) -> None:
@@ -54,8 +57,15 @@ async def async_setup_entry(hass: HomeAssistant, config: ConfigEntry):
     try:
         coordinator = PiHoleUpdateCoordinator(hass, config)
 
+        with open(manifest_path, 'r') as f:
+            manifest_data = json.load(f)
+
         await coordinator.async_config_entry_first_refresh()
-        config.runtime_data = PiHoleData(coordinator, PiHoleConfig(**config.data))
+        config.runtime_data = PiHoleData(
+            coordinator, 
+            PiHoleConfig(**config.data),
+            manifest_data
+        )
 
         await hass.config_entries.async_forward_entry_setups(config, platforms)
         return True
