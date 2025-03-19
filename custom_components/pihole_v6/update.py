@@ -136,7 +136,7 @@ class IntegrationUpdate(PiHoleEntity, UpdateEntity):
         shutil.move(integration, integration_backup)
 
     async def update_integration(self, version: str | None):
-        integration = self.hass.config.path(f'custom_components')
+        integration = self.hass.config.path(f'custom_components/{DOMAIN}')
         session = async_get_clientsession(self.hass)
         async with session.get(self._attr_zip_url) as r:
             zip_data = await r.read()
