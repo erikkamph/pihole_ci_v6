@@ -48,6 +48,7 @@ class ToggleHole(PiHoleEntity, SwitchEntity):
         self._idx = idx
         self._name = "Pi-Hole"
         self.device = PiHole(hass, config)
+        self._attr_unique_id = f"{config.entry_id}/{self._name.lower().replace("-", "_")}_switch"
         super().__init__(config.runtime_data.coordinator, name=self._name, server_unique_id=config.entry_id, config_entry=config, context=self._idx, hass=hass)
 
     @callback
@@ -66,7 +67,7 @@ class ToggleHole(PiHoleEntity, SwitchEntity):
     
     @property
     def unique_id(self) -> str:
-        return f"{self.device.entry.entry_id}/Switch"
+        return self._attr_unique_id
     
     @property
     def is_on(self) -> bool:

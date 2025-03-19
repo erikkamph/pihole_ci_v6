@@ -81,7 +81,7 @@ class IntegrationUpdate(PiHoleEntity, UpdateEntity):
         self._attr_latest_version = ""
         self._attr_release_url = ""
         self._attr_available = False
-        self._attr_supported_features = (UpdateEntityFeature.RELEASE_NOTES | UpdateEntityFeature.INSTALL | UpdateEntityFeature.PROGRESS)
+        self._attr_supported_features = (UpdateEntityFeature.RELEASE_NOTES | UpdateEntityFeature.INSTALL | UpdateEntityFeature.PROGRESS | UpdateEntityFeature.BACKUP)
         self._api = PiHole(hass, config_entry)
         self._attr_zip_url = ""
         self._attr_icon = "mdi:pi-hole"

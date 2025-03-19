@@ -7,7 +7,6 @@ from .models.sensors.version import PiHoleVersionSensor
 from .models.sensors.blocking import PiHoleBlockingSensor
 from .models.sensors.statistic import PiHoleStatisticSensor
 from .models.sensors.binary_statistic import PiHoleBinaryStatistic
-from .models.const import DOMAIN
 
 statistic_sensors = {
     "active_clients": {
@@ -39,6 +38,11 @@ statistic_sensors = {
         "translation_key": "cache_size",
         "key": "cache_size",
         "name": "Cache size"
+    },
+    "iface.v4.name": {
+        "translation_key": "iface",
+        "key": "iface",
+        "name": "Configured interface"
     }
 }
 

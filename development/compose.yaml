@@ -12,14 +12,9 @@ services:
     image: "ghcr.io/home-assistant/home-assistant:stable"
     environment:
       TZ: ${TZ:-Europe/Stockholm}
-    restart: unless-stopped
+    restart: always
     volumes:
       - ./ha:/config
-    develop:
-      watch:
-        - path: ./custom_components/hole
-          action: sync+restart
-          target: /config/custom_components/hole
     privileged: true
     networks:
       - default
@@ -40,3 +35,4 @@ services:
       - 8080:80/tcp
     volumes:
       - ./pihole:/etc/pihole
+    restart: always
