@@ -130,7 +130,7 @@ class IntegrationUpdate(PiHoleEntity, UpdateEntity):
         integration_backup = f"{integration}.bak"
         shutil.move(integration, integration_backup)
 
-    async def update_integration(self):
+    async def update_integration(self, version: str | None):
         integration = self.hass.config.path(f'custom_components')
         session = async_get_clientsession(self.hass)
         async with session.get(self._attr_zip_url) as r:
