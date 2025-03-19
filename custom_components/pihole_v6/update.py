@@ -84,6 +84,7 @@ class IntegrationUpdate(PiHoleEntity, UpdateEntity):
         self._attr_supported_features = (UpdateEntityFeature.RELEASE_NOTES | UpdateEntityFeature.INSTALL | UpdateEntityFeature.PROGRESS)
         self._api = PiHole(hass, config_entry)
         self._attr_zip_url = ""
+        self._attr_icon = "mdi:pi-hole"
 
     def version_is_newer(self, latest_version: str | None, installed_version: str | None):
         return asyncio.run_coroutine_threadsafe(self._api.version_is_newer(latest_version, installed_version), self.hass.loop)
@@ -97,6 +98,10 @@ class IntegrationUpdate(PiHoleEntity, UpdateEntity):
             self._attr_zip_url = data['zip_file']
             self._attr_available = True
             self.async_write_ha_state()
+    
+    @property
+    def icon(self):
+        return self._attr_icon
 
     @property
     def name(self):
@@ -181,6 +186,7 @@ class PiHoleComponentUpdate(PiHoleEntity, UpdateEntity):
         self._attr_installed_version = None
         self._key = key
         self._api = PiHole(hass, config_entry)
+        self._attr_icon = "mdi:pi-hole"
 
         self._repo = "https://github.com/pi-hole/"
         self._release = "/releases/tag"
@@ -192,6 +198,10 @@ class PiHoleComponentUpdate(PiHoleEntity, UpdateEntity):
                 self._release_url_base = f"{self._repo}FTL{self._release}"
             case 'web':
                 self._release_url_base = f"{self._repo}web{self._release}"
+    
+    @property
+    def icon(self):
+        return self._attr_icon
     
     @callback
     def _handle_coordinator_update(self):
