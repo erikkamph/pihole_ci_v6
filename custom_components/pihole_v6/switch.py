@@ -9,9 +9,8 @@ from homeassistant.core import callback
 from uuid import uuid4
 from .entity import PiHoleEntity
 from homeassistant.core import HomeAssistant
-from homeassistant.helpers.entity_platform import AddEntitiesCallback
+from homeassistant.helpers.entity_platform import AddEntitiesCallback, async_get_current_platform
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.helpers.entity_platform import async_get_current_platform
 from homeassistant.helpers import config_validation as cv
 from .models.const import (
     SERVICE_DISABLE,

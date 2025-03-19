@@ -1,4 +1,3 @@
-import logging
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from .models.config import PiHoleConfig
@@ -133,6 +132,7 @@ class PiHole():
         data = {
             'latest_version': response['tag_name'],
             'release_url': response['html_url'],
+            'zip_file': response['assets'][0]['browser_download_url']
         }
         await self.update_data('integration_updates', data)
 
@@ -152,3 +152,14 @@ class PiHole():
             }
         }
         await self(call=request)
+    
+    async def version_is_newer(self, latest_version: str | None, installed_version: str | None):
+        if not latest_version or latest_version == '':
+            return False
+        
+        if not installed_version or installed_version == '':
+            raise ValueError("Unknown version installed")
+        
+        latest = ''.join(latest_version.replace("v", "").split("."))
+        installed = ''.join(installed_version.replace("v", "").split("."))
+        return int(latest) > int(installed)

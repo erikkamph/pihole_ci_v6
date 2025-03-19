@@ -1,4 +1,5 @@
 import os
+import aiofiles
 import json
 import logging
 from homeassistant.const import Platform, CONF_API_KEY, CONF_HOST
@@ -57,8 +58,8 @@ async def async_setup_entry(hass: HomeAssistant, config: ConfigEntry):
     try:
         coordinator = PiHoleUpdateCoordinator(hass, config)
 
-        with open(manifest_path, 'r') as f:
-            manifest_data = json.load(f)
+        async with aiofiles.open(manifest_path, 'r') as f:
+            manifest_data = json.loads(await f.read())
 
         await coordinator.async_config_entry_first_refresh()
         config.runtime_data = PiHoleData(

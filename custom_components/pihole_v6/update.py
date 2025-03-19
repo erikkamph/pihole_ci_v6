@@ -4,17 +4,8 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.components.update import UpdateEntity, UpdateEntityDescription
 from .entity import PiHoleEntity
 from .coordinator import PiHoleUpdateCoordinator
-
-def version_is_newer(latest_version: str | None, installed_version: str | None):
-    if not latest_version or latest_version == '':
-        return False
-    
-    if not installed_version or installed_version == '':
-        raise ValueError("Unknown version installed")
-    
-    latest = ''.join(latest_version.replace("v", "").split("."))
-    installed = ''.join(installed_version.replace("v", "").split("."))
-    return int(installed) < int(latest)
+from .hole import PiHole
+import asyncio
 
 
 async def async_setup_entry(hass: HomeAssistant,
@@ -88,9 +79,10 @@ class IntegrationUpdate(PiHoleEntity, UpdateEntity):
         self._attr_latest_version = ""
         self._attr_release_url = ""
         self._attr_available = False
+        self._api = PiHole(hass, config_entry)
 
     def version_is_newer(self, latest_version: str | None, installed_version: str | None):
-        return version_is_newer(latest_version, installed_version)
+        return asyncio.run_coroutine_threadsafe(self._api.version_is_newer(latest_version, installed_version), self.hass.loop)
 
     @callback
     def _handle_coordinator_update(self):
@@ -138,6 +130,7 @@ class PiHoleComponentUpdate(PiHoleEntity, UpdateEntity):
         self._attr_latest_version = None
         self._attr_installed_version = None
         self._key = key
+        self._api = PiHole(hass, config_entry)
 
         self._repo = "https://github.com/pi-hole/"
         self._release = "/releases/tag"
@@ -167,7 +160,7 @@ class PiHoleComponentUpdate(PiHoleEntity, UpdateEntity):
             self.async_write_ha_state()
     
     def version_is_newer(self, latest_version: str | None, installed_version: str | None):
-        return version_is_newer(latest_version, installed_version)
+        return asyncio.run_coroutine_threadsafe(self._api.version_is_newer(latest_version, installed_version), self.hass.loop)
 
     @property
     def name(self):
