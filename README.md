@@ -1,6 +1,18 @@
 # PiHole V6 Custom Integration
 This is a Pi-Hole Custom Integration for version 6 of Pi-Hole which introduced sessions and moved the api from `/admin/api` to `/api`. The integration has a checklist besides the stuff that is implemented or to be implemented and it can be found at [/CHECKLIST.md](/CHECKLIST.md). If you want a feature to be implemented, open an issue at [https://github.com/erikkamph/pihole_ci_v6/issues](https://github.com/erikkamph/pihole_ci_v6/issues), if accepted, the issue will be linked in the [/TODO.md](/TODO.md) to track.
 
+## Semantic Versioning
+This repository uses semantic versioning, more information can be found at [https://semver.org/](https://semver.org/).
+A short summary can be read below:
+```
+Given a version number MAJOR.MINOR.PATCH, increment the:
+
+MAJOR version when you make incompatible API changes
+MINOR version when you add functionality in a backward compatible manner
+PATCH version when you make backward compatible bug fixes
+Additional labels for pre-release and build metadata are available as extensions to the MAJOR.MINOR.PATCH format.
+```
+
 ## Translations
 Currently available for following languages:
 - Japanese
