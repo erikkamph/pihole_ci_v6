@@ -21,7 +21,7 @@
 - [x] `unique-config-entry` - Don't allow the same device or service to be able to be set up twice
 
 ## Silver
-- [ ] `action-exceptions` - Service actions raise exceptions when encountering failures
+- [x] `action-exceptions` - Service actions raise exceptions when encountering failures
 - [x] `config-entry-unloading` - Support config entry unloading
 - [x] `docs-configuration-parameters` - The documentation describes all integration configuration options
 - [x] `docs-installation-parameters` - The documentation describes all integration installation parameters
@@ -45,10 +45,10 @@
 - [ ] `docs-troubleshooting` - The documentation provides troubleshooting information
 - [ ] `docs-use-cases` - The documentation describes use cases to illustrate how this integration can be used
 - [ ] `dynamic-devices` - Devices added after integration setup
-- [ ] `entity-category` - Entities are assigned an appropriate EntityCategory
-- [ ] `entity-device-class` - Entities use device classes where possible
-- [ ] `entity-disabled-by-default` - Integration disables less popular (or noisy) entities
-- [ ] `entity-translations` - Entities have translated names
+- [x] `entity-category` - Entities are assigned an appropriate EntityCategory
+- [x] `entity-device-class` - Entities use device classes where possible
+- [x] `entity-disabled-by-default` - Integration disables less popular (or noisy) entities
+- [x] `entity-translations` - Entities have translated names
 - [ ] `exception-translations` - Exception messages are translatable
 - [ ] `icon-translations` - Icon translations
 - [ ] `reconfiguration-flow` - Integrations should have a reconfigure flow
