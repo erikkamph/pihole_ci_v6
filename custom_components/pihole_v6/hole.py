@@ -33,7 +33,10 @@ class PiHole():
         tmp_method = call['method'].lower()
         async with method[tmp_method](**call['request']) as r:
             if skip_status or r.status == 200:
-                return await r.json()
+                if r.content_type == "application/json":
+                    return await r.json()
+                else:
+                    return None
             raise HoleException(await r.text())
         raise HoleException("Something unexpected happened with the request, session or client.")
 
