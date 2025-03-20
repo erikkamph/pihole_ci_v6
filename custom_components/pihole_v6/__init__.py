@@ -19,7 +19,8 @@ _LOGGER = logging.getLogger(__name__)
 platforms = [
     Platform.SWITCH,
     Platform.SENSOR,
-    Platform.UPDATE
+    Platform.UPDATE,
+    Platform.BUTTON
 ]
 TO_REDACT = [
     CONF_SID,

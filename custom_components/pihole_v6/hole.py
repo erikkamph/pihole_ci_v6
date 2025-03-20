@@ -164,3 +164,16 @@ class PiHole():
         latest = ''.join(latest_version.replace("v", "").split("."))
         installed = ''.join(installed_version.replace("v", "").split("."))
         return int(latest) > int(installed)
+
+    async def run_action(self, action_endpoint):
+        request = {
+            'method': 'POST',
+            'request': {
+                'url': f"{self.config.api_url}{action_endpoint}",
+                'headers': {
+                    HEADER_CSRF: self.config.csrf,
+                    HEADER_SID: self.config.sid
+                }
+            }
+        }
+        await self(call=request)

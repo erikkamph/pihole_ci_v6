@@ -1,10 +1,10 @@
 {
     "domain": "pihole_v6",
-    "name": "Pi-Hole V6 (Dev)",
+    "name": "Pi-Hole V6",
     "codeowners": ["@erikkamph"],
     "config_flow": true,
     "documentation": "https://github.com/erikkamph/pihole_ci_v6/tree/main/README.md",
     "iot_class": "local_polling",
     "requirements": ["pydantic==2.10.6", "validators==0.34.0", "aiofiles==24.1.0", "pandas==2.2.3"],
-    "version": "1.0.8"
+    "version": "1.1.0"
 }
