@@ -1,7 +1,8 @@
 # PiHole V6 Custom Integration
-This is a Pi-Hole Custom Integration for version 6 of Pi-Hole which introduced sessions and moved the api from `/admin/api` to `/api`. The integration has a checklist besides the stuff that is implemented or to be implemented and it can be found at [/CHECKLIST.md](/CHECKLIST.md). If you want a feature to be implemented, open an issue at [https://github.com/erikkamph/pihole_ci_v6/issues](https://github.com/erikkamph/pihole_ci_v6/issues), if accepted, the issue will be linked in the [/TODO.md](/TODO.md) to track.
+This is a Pi-Hole Custom Integration for version 6 of Pi-Hole which introduced sessions and moved the api from `/admin/api` to `/api`. The integration has a checklist besides the stuff that is implemented or to be implemented and it can be found at [/CHECKLIST.md](/CHECKLIST.md). If you want a feature to be implemented, visit the [issues](https://github.com/erikkamph/pihole_ci_v6/issues) page. If accepted, the issue will be linked in the [/TODO.md](/TODO.md) to track.
 
 ## Navigation
+This is basic navigation for the [README.md](/README.md) until full docs are in place for the custom integration.
 - [Semantic Versioning](#semantic-versioning)
 - [Dependencies](#dependencies)
 - [Translations](#translations)
