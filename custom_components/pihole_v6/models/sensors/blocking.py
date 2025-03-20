@@ -17,8 +17,13 @@ class PiHoleBlockingSensor(PiHoleEntity, BinarySensorEntity):
         )
         self._name = self.entity_description.name
         self._attr_unique_id = f"{config.entry_id}/{self.entity_description.key}"
+        self._attr_has_entity_name = True
         super().__init__(self._config.runtime_data.coordinator, self._name, config.entry_id, config, hass, self._idx)
 
+    @property
+    def has_entity_name(self):
+        return self._attr_has_entity_name
+    
     @callback
     def _handle_coordinator_update(self) -> None:
         blocking = self.coordinator.data['blocking']

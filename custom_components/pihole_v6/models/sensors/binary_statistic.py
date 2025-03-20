@@ -14,7 +14,12 @@ class PiHoleBinaryStatistic(PiHoleEntity, BinarySensorEntity):
         self._keyword = 'statistics'
         self.entity_description = description
         self._name = self.entity_description.name
+        self._attr_has_entity_name = True
         self._attr_unique_id = f"{server_unique_id}/{self.entity_description.key}"
+
+    @property
+    def has_entity_name(self):
+        return self._attr_has_entity_name
 
     @callback
     def _handle_coordinator_update(self):

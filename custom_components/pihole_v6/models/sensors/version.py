@@ -19,7 +19,12 @@ class PiHoleVersionSensor(PiHoleEntity, SensorEntity):
         self.entity_description = SensorEntityDescription(key=keyword, translation_key=keyword)
         self._attr_available = False
         self._attr_unique_id = f"{config.entry_id}/{self.entity_description.key}"
+        self._attr_has_entity_name = True
         super().__init__(config.runtime_data.coordinator, self._name, server_unique_id=config.entry_id, config_entry=config, hass=hass, context=self._idx)
+
+    @property
+    def has_entity_name(self):
+        return self._attr_has_entity_name
 
     async def set_state(self, state: PiHoleVersionInfo):
         match self._keyword:

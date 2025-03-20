@@ -16,7 +16,12 @@ class PiHoleStatisticSensor(PiHoleEntity, SensorEntity):
         self.entity_description = description
         self._attr_unique_id = f"{config.entry_id}/{self.entity_description.key}"
         self._attr_state_class = SensorStateClass.TOTAL if self._statistic_path == "gravity" else SensorStateClass.MEASUREMENT
+        self._attr_has_entity_name = True
         super().__init__(coordinator, self._name, config.entry_id, config, hass, context)
+
+    @property
+    def has_entity_name(self):
+        return self._attr_has_entity_name
 
     @callback
     def _handle_coordinator_update(self):

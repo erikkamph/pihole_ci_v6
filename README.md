@@ -13,6 +13,13 @@ PATCH version when you make backward compatible bug fixes
 Additional labels for pre-release and build metadata are available as extensions to the MAJOR.MINOR.PATCH format.
 ```
 
+## Dependencies
+Python package dependencies:
+- `pydantic==2.10.6`
+- `validators==0.34.0`
+- `aiofiles==24.1.0`
+- `pandas==2.2.3`
+
 ## Translations
 Currently available for following languages:
 - Japanese
@@ -53,6 +60,42 @@ If you want a translation for your language, open a PR in a separate branch and 
 2. Remove the folder `pihole_v6` from `custom_components` in the Home Assistant configuration folder
 3. Reload Home Assistant from `Settings -> Three dots upper right corner -> Restart Home Assistant`
 4. The integration should now be successfully removed from Home Assistant
+
+## Actions
+### Pi-Hole Toggle
+Toggles Pi-Hole on or off for a period of 5 minues.
+
+### Update Gravity
+Sends a POST request to Pi-Hole telling it to update the ad block lists for Gravity.
+
+### Flush Arp/Logs
+Clears the logs or ARP tables.
+
+### Restart DNS
+Restarts the DNS of the Pi-Hole instance.
+
+## Configuring the integration in Home Assistant
+Steps to configure the integration after installing using [#setup](#setup).
+1. Visit `Devices & services` under `Settings`.
+2. Click `Add integration` in the bottom right corner
+3. Search for and select `Pi-Hole V6`
+4. In the dialogue `Step 1` enter a configuration name, this will also be the name of the device. The preferred name is in lowercase without spaces.
+5. In the dialogue `Step 2`
+    1. Enter the location of the pihole instance without `http(s)` and without `/api`
+    2. Select `https` or `http`
+    3. Enter `api` if the api is located at `/api`.
+    4. Enter the relevant port that pihole is running at, `80` and `443` are standard for https and doesn't get included in the url.
+    5. Select `Verify SSL` if it should verify the http/https certificate
+6. In the dialogue `Step 3`, enter the API key, if you don't have one you can create one using following steps:
+    1. Open your pihole instance and login
+    2. Under `System` click `Settings`
+    3. Go to `Web interface / API`
+    4. Switch from `Basic` to `Advanced` mode in the upper right corner
+    5. Click on `Configure app password`
+    6. Copy the password under the text `Your new app password is:` which is hidden behind black stripes for security.
+    7. Go back to Home Assistant and enter the app password you copied from the previous step in the input.
+7. Enjoy your newly configured `Pi-Hole V6` integration
+
 
 ## Development
 The `compose.yaml` file can be found [/development/compose.yaml](/development/compose.yaml) and contains
