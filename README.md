@@ -1,6 +1,24 @@
 # PiHole V6 Custom Integration
 This is a Pi-Hole Custom Integration for version 6 of Pi-Hole which introduced sessions and moved the api from `/admin/api` to `/api`. The integration has a checklist besides the stuff that is implemented or to be implemented and it can be found at [/CHECKLIST.md](/CHECKLIST.md). If you want a feature to be implemented, open an issue at [https://github.com/erikkamph/pihole_ci_v6/issues](https://github.com/erikkamph/pihole_ci_v6/issues), if accepted, the issue will be linked in the [/TODO.md](/TODO.md) to track.
 
+## Navigation
+- [Semantic Versioning](#semantic-versioning)
+- [Dependencies](#dependencies)
+- [Translations](#translations)
+- [Installation](#setup)
+    - [Installation with docker](#setup-with-git-and-docker)
+    - [Installation via HACS](#setup-with-hacs)
+    - [Installation with script](#setup-using-script)
+- [Uninstallation](#removal-of-pihole_v6)
+- [Configuration](#configuring-the-integration-in-home-assistant)
+- [Actions](#actions)
+    - [Toggle Pi-Hole](#pi-hole-toggle)
+    - [Update Gravity](#update-gravity)
+    - [Flush Arp/Logs](#flush-arplogs)
+    - [Restart DNS](#restart-dns)
+- [Development](#development)
+    - [Notes](#note)
+
 ## Semantic Versioning
 This repository uses semantic versioning, more information can be found at [https://semver.org/](https://semver.org/).
 A short summary can be read below:
@@ -61,19 +79,6 @@ If you want a translation for your language, open a PR in a separate branch and 
 3. Reload Home Assistant from `Settings -> Three dots upper right corner -> Restart Home Assistant`
 4. The integration should now be successfully removed from Home Assistant
 
-## Actions
-### Pi-Hole Toggle
-Toggles Pi-Hole on or off for a period of 5 minues.
-
-### Update Gravity
-Sends a POST request to Pi-Hole telling it to update the ad block lists for Gravity.
-
-### Flush Arp/Logs
-Clears the logs or ARP tables.
-
-### Restart DNS
-Restarts the DNS of the Pi-Hole instance.
-
 ## Configuring the integration in Home Assistant
 Steps to configure the integration after installing using [#setup](#setup).
 1. Visit `Devices & services` under `Settings`.
@@ -96,6 +101,18 @@ Steps to configure the integration after installing using [#setup](#setup).
     7. Go back to Home Assistant and enter the app password you copied from the previous step in the input.
 7. Enjoy your newly configured `Pi-Hole V6` integration
 
+## Actions
+### Pi-Hole Toggle
+Toggles Pi-Hole on or off for a period of 5 minues.
+
+### Update Gravity
+Sends a POST request to Pi-Hole telling it to update the ad block lists for Gravity.
+
+### Flush Arp/Logs
+Clears the logs or ARP tables.
+
+### Restart DNS
+Restarts the DNS of the Pi-Hole instance.
 
 ## Development
 The `compose.yaml` file can be found [/development/compose.yaml](/development/compose.yaml) and contains
