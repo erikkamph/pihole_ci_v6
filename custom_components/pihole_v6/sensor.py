@@ -9,55 +9,44 @@ from .models.sensors.statistic import PiHoleStatisticSensor
 from .models.sensors.binary_statistic import PiHoleBinaryStatistic
 
 statistic_sensors = {
-    "active_clients": {
+    "clients.active": {
+        "name": "Active clients (last 24 hours)",
         "translation_key": "active_clients",
-        "key": "active_clients",
-        "name": "Active clients"
+        "key": "active_clients"
     },
-    "gravity_size": {
-        "translation_key": "gravity_size",
-        "key": "gravity_size",
-        "name": "Domains blocked by gravity"
+    "clients.total": {
+        "name": "Total clients",
+        "translation_key": "total_clients",
+        "key": "total_clients"
     },
     "queries.total": {
-        "translation_key": "total_queries",
-        "key": "total_queries",
-        "name": "Queries made last 24 hours"
+        "name": "Total queries made",
+        "translation_key": "",
+        "key": ""
     },
     "queries.blocked": {
+        "name": "Blocked queries",
         "translation_key": "blocked_queries",
-        "key": "blocked_queries",
-        "name": "Blocked queries last 24 hours"
+        "key": "blocked_queries"
     },
     "queries.percent_blocked": {
-        "translation_key": "percentage_blocked",
-        "key": "percentage_blocked",
-        "name": "Percentage of queries blocked"
+        "name": "Percentage of queries blocked",
+        "translation_key": "blocked_percentage",
+        "key": "blocked_percentage"
     },
-    "cache.size": {
-        "translation_key": "cache_size",
-        "key": "cache_size",
-        "name": "Cache size"
+    "queries.forwarded": {
+        "name": "Number of queries forwarded",
+        "translation_key": "forwarded_queries",
+        "key": "forwarded_queries"
     },
-    "iface.v4.name": {
-        "translation_key": "iface",
-        "key": "iface",
-        "name": "Configured interface"
+    "gravity": {
+        "name": "Number of domains blocked by Gravity",
+        "translation_key": "gravity_statistics",
+        "key": "gravity_statistics"
     }
 }
 
-binary_statistic_sensor = {
-    "config.dhcp_active": {
-        "translation_key": "dhcp_active",
-        "key": "dhcp_active",
-        "name": "DHCP Active"
-    },
-    "config.dns_dnssec": {
-        "translation_key": "dnssec",
-        "key": "dnssec",
-        "name": "DNSSEC enabled"
-    }
-}
+binary_statistic_sensor = {}
 
 
 async def async_setup_entry(hass: HomeAssistant, config: ConfigEntry, async_add_entities: AddEntitiesCallback):

@@ -11,6 +11,9 @@ from .models.summary import PiHoleSummary
 from .models.dns import PiHoleDnsBlocking
 from .models.version import PiHoleVersionInfo
 import pandas as pd
+import logging
+
+_LOGGER = logging.getLogger(__name__)
 
 
 class PiHole():
@@ -104,7 +107,7 @@ class PiHole():
         request = {
             'method': 'GET',
             'request': {
-                'url': f'{self.config.api_url}padd',
+                'url': f'{self.config.api_url}stats/summary',
                 'headers': {
                     HEADER_SID: self.config.sid,
                     HEADER_CSRF: self.config.csrf
