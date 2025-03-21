@@ -19,4 +19,4 @@ CONF_SCHEMA = "scheme"
 HEADER_SID = "X-FTL-SID"
 HEADER_CSRF = "X-FTL-CSRF"
 
-MIN_TIME_BETWEEN_UPDATES = timedelta(seconds=30)
+MIN_TIME_BETWEEN_UPDATES = timedelta(minutes=2, seconds=30)
