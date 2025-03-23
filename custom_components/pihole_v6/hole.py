@@ -127,21 +127,21 @@ class PiHole():
         data = df.to_dict(orient='records')[0]
         await self.update_data("statistics", data)
 
-    async def update_integration_version(self):
+    async def update_summary(self, summary: str):
         request = {
             'method': 'GET',
             'request': {
-                'url': 'https://api.github.com/repos/erikkamph/pihole_ci_v6/releases/latest'
+                'url': f'https://api.github.com/repos/{summary}/releases/latest'
             }
         }
         response = await self(call=request)
         data = {
             'latest_version': response['tag_name'],
             'release_url': response['html_url'],
-            'zip_file': response['assets'][0]['browser_download_url'],
+            'zip_file': None if len(response['assets']) < 1 else response['assets'][0]['browser_download_url'],
             'release_notes': response['body']
         }
-        await self.update_data('integration_updates', data)
+        await self.update_data(summary, data)
 
     async def toggle(self, blocking: bool = True, timer: int = None):
         if not await self.verify_session():

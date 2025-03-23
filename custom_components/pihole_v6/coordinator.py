@@ -37,7 +37,15 @@ class PiHoleUpdateCoordinator(DataUpdateCoordinator):
                 await self._device.update_blocking()
                 await self._device.update_versions()
                 await self._device.update_statistics()
-                await self._device.update_integration_version()
+
+                summaries = [
+                    "pi-hole/web",
+                    "pi-hole/FTL",
+                    "pi-hole/pi-hole",
+                    "erikkamph/pihole_ci_v6"
+                ]
+                for summary in summaries:
+                    await self._device.update_summary(summary)
 
                 return self._device.data
         except HoleException as err:

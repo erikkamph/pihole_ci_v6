@@ -13,8 +13,12 @@ class PiHoleBlockingSensor(PiHoleEntity, BinarySensorEntity):
         self.entity_description = BinarySensorEntityDescription(
             name="Pi-Hole Blocking",
             key="hole_blocking",
-            translation_key="hole_blocking"
+            translation_key="hole_blocking",
+            icon="mdi:pi-hole",
+            has_entity_name=True,
+            device_class=BinarySensorDeviceClass.RUNNING
         )
+        self._attr_device_class = self.entity_description.device_class
         self._name = self.entity_description.name
         self._attr_unique_id = f"{config.entry_id}/{self.entity_description.key}"
         self._attr_has_entity_name = True
@@ -36,7 +40,7 @@ class PiHoleBlockingSensor(PiHoleEntity, BinarySensorEntity):
     
     @property
     def device_class(self) -> BinarySensorDeviceClass:
-        return BinarySensorDeviceClass.RUNNING
+        return self._attr_device_class
     
     @property
     def unique_id(self):
@@ -45,3 +49,7 @@ class PiHoleBlockingSensor(PiHoleEntity, BinarySensorEntity):
     @property
     def name(self):
         return self._name
+
+    @property
+    def icon(self):
+        return self.entity_description.icon

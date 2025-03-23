@@ -7,7 +7,9 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.exceptions import ConfigEntryNotReady
 from homeassistant.helpers.redact import async_redact_data
 from homeassistant.components import system_health
-from homeassistant.helpers.device_registry import async_get, DeviceEntry
+from homeassistant.helpers.device_registry import async_get
+from homeassistant.helpers.aiohttp_client import async_get_clientsession
+from aiohttp import ClientResponseError
 from typing import Any
 from .coordinator import PiHoleUpdateCoordinator
 from .models.config import PiHoleConfig
@@ -32,6 +34,29 @@ TO_REDACT = [
 @callback
 def async_register(hass: HomeAssistant, register: system_health.SystemHealthRegistration) -> None:
     register.async_register_info(system_health_info)
+    register.async_register_info(system_health_info_git)
+
+
+async def system_health_info_git(hass: HomeAssistant):
+    base_url = "https://api.github.com/"
+    rate_limit = f"{base_url}rate_limit"
+
+    try:
+        session = async_get_clientsession(hass)
+        async with session.get(rate_limit) as r:
+            if r.status == 200:
+                limits = await r.json()
+                rate = limits['rate']
+
+                return {
+                    "consumed_requests": rate['used'],
+                    "remaining_requests": rate['remaining'],
+                    "can_reach_server": system_health.async_check_can_reach_url(base_url)
+                }
+    except ClientResponseError:
+        return {
+            "can_reach_server": system_health.async_check_can_reach_url(base_url)
+        }
 
 
 async def system_health_info(hass: HomeAssistant) -> dict[str, Any]:

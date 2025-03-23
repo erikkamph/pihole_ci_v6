@@ -52,3 +52,15 @@ class PiHoleStatisticSensor(PiHoleEntity, SensorEntity):
         if hasattr(self, '_attr_last_reset'):
             return self._attr_last_reset
         return None
+    
+    @property
+    def icon(self):
+        return self.entity_description.icon
+    
+    @property
+    def unit_of_measurement(self):
+        return self.entity_description.unit_of_measurement
+    
+    @property
+    def suggested_display_precision(self):
+        return self.entity_description.suggested_display_precision

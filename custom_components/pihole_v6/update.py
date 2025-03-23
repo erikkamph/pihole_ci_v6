@@ -74,7 +74,7 @@ class IntegrationUpdate(PiHoleEntity, UpdateEntity):
                  description: UpdateEntityDescription,
                  context = None):
         super().__init__(coordinator, description.name, server_unique_id, config_entry, hass, context)
-        self._key = 'integration_updates'
+        self._key = 'erikkamph/pihole_ci_v6'
         self._manifest_data = config_entry.runtime_data.manifest
         self._attr_installed_version = f"v{self._manifest_data['version']}"
         self._attr_unique_id = f"{server_unique_id}/{self._key}"
@@ -187,6 +187,8 @@ class PiHoleComponentUpdate(PiHoleEntity, UpdateEntity):
         self._key = key
         self._api = PiHole(hass, config_entry)
         self._attr_icon = "mdi:pi-hole"
+        self._attr_release_summary = ""
+        self._second_key = ""
 
         self._repo = "https://github.com/pi-hole/"
         self._release = "/releases/tag"
@@ -211,13 +213,22 @@ class PiHoleComponentUpdate(PiHoleEntity, UpdateEntity):
                 case 'core':
                     self._attr_installed_version = versions.version.core.local.version
                     self._attr_latest_version = versions.version.core.remote.version
+                    self._second_key = "pi-hole/pi-hole"
                 case 'web':
                     self._attr_installed_version = versions.version.web.local.version
                     self._attr_latest_version = versions.version.web.remote.version
+                    self._second_key = "pi-hole/web"
                 case 'ftl':
                     self._attr_installed_version = versions.version.ftl.local.version
                     self._attr_latest_version = versions.version.ftl.remote.version
-            self.async_write_ha_state()
+                    self._second_key = "pi-hole/FTL"
+            
+        if self._second_key in self.coordinator.data:
+            extra_info = self.coordinator.data[self._second_key]
+            self._attr_release_url = extra_info['release_url']
+            self._attr_release_summary = extra_info['release_notes']
+            self._attr_latest_version = extra_info['latest_version']
+        self.async_write_ha_state()
     
     def version_is_newer(self, latest_version: str | None, installed_version: str | None):
         return asyncio.run_coroutine_threadsafe(self._api.version_is_newer(latest_version, installed_version), self.hass.loop)
@@ -237,6 +248,9 @@ class PiHoleComponentUpdate(PiHoleEntity, UpdateEntity):
     @property
     def release_url(self):
         try:
+            if self._attr_release_url:
+                return self._attr_release_url
+
             if not self.version_is_newer(self._attr_latest_version, self._attr_installed_version):
                 version = self._attr_installed_version
             else:
@@ -244,3 +258,7 @@ class PiHoleComponentUpdate(PiHoleEntity, UpdateEntity):
             return f"{self._release_url_base}/{version}"
         except Exception:
             return f"{self._release_url_base}/{self._attr_installed_version}"
+
+    @property
+    def release_notes(self):
+        return self._attr_release_summary

@@ -12,37 +12,59 @@ statistic_sensors = {
     "clients.active": {
         "name": "Active clients (last 24 hours)",
         "translation_key": "active_clients",
-        "key": "active_clients"
+        "key": "active_clients",
+        "unit_of_measurement": "clients",
+        "has_entity_name": True,
+        "icon": "mdi:devices"
     },
     "clients.total": {
         "name": "Total clients",
         "translation_key": "total_clients",
-        "key": "total_clients"
+        "key": "total_clients",
+        "unit_of_measurement": "clients",
+        "has_entity_name": True,
+        "icon": "mdi:devices"
     },
     "queries.total": {
         "name": "Total queries made",
-        "translation_key": "",
-        "key": ""
+        "translation_key": "total_queries",
+        "key": "total_queries",
+        "unit_of_measurement": "queries",
+        "has_entity_name": True,
+        "icon": ""
     },
     "queries.blocked": {
         "name": "Blocked queries",
         "translation_key": "blocked_queries",
-        "key": "blocked_queries"
+        "key": "blocked_queries",
+        "unit_of_measurement": "queries",
+        "has_entity_name": True,
+        "icon": "mdi:close-octagon-outline"
     },
     "queries.percent_blocked": {
         "name": "Percentage of queries blocked",
         "translation_key": "blocked_percentage",
-        "key": "blocked_percentage"
+        "key": "blocked_percentage",
+        "unit_of_measurement": "%",
+        "has_entity_name": True,
+        "icon": "mdi:close-octagon-outline",
+        "suggested_display_precision": 2
     },
     "queries.forwarded": {
         "name": "Number of queries forwarded",
         "translation_key": "forwarded_queries",
-        "key": "forwarded_queries"
+        "key": "forwarded_queries",
+        "unit_of_measurement": "queries",
+        "has_entity_name": True,
+        "icon": "mdi:forwardburger"
     },
     "gravity": {
         "name": "Number of domains blocked by Gravity",
         "translation_key": "gravity_statistics",
-        "key": "gravity_statistics"
+        "key": "gravity_statistics",
+        "unit_of_measurement": "domains",
+        "has_entity_name": True,
+        "icon": "mdi:domain"
     }
 }
 
