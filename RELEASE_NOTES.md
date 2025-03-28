@@ -1,9 +1,7 @@
 ## What's changed
-- Sensors do now have `units_of_measurement` connected to them e.g. `Total clients` has `clients` as `unit_of_measurement`
-- Sensors have gotten updated icons e.g. `Unique domains` has `mdi:domain` as icon instead of the default `mdi:eye`
-- The coordinator downloads release notes from github
-- System health checks api quota against github
-- Sensors now have `has_entity_name` set to `True`
+- Data for the github poll which requires update will now only update once every 7 days
+- Polling for github data for pihole components has been removed
+- Statistics has changed structure, we are talking about total clients and active clients not seen clients and unique clients. This is beause the data and description is about the total number of clients and the number of active clients last 24 hours.
 
 ## Breaking changes
 **None**
@@ -12,6 +10,4 @@
 **None**
 
 ## Known bugs
-- API Limits might be reached when trying to fetch release information from `GitHub`
 - Devices does not get properly removed, e.g. when reloading Home Assistant it creates a new device with the same entities and the old is left without entities.
-- Release information for different Pi-Hole components gets cut-off.
