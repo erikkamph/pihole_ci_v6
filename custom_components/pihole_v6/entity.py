@@ -25,7 +25,8 @@ class PiHoleEntity(CoordinatorEntity[PiHoleUpdateCoordinator]):
     def device_info(self):
         return DeviceInfo(
             identifiers=set((DOMAIN, self._server_unique_id)),
-            name=self.api.config.name.title(),
+            name=self._name,
             manufacturer="Pi-Hole",
-            configuration_url=self.api.config.api_url
+            configuration_url=self.api.config.api_url,
+            sw_version="6.0.5",
         )

@@ -13,10 +13,6 @@ This is basic navigation for the [README.md](/README.md) until full docs are in 
 - [Uninstallation](#removal-of-pihole_v6)
 - [Configuration](#configuring-the-integration-in-home-assistant)
 - [Actions](#actions)
-    - [Toggle Pi-Hole](#pi-hole-toggle)
-    - [Update Gravity](#update-gravity)
-    - [Flush Arp/Logs](#flush-arplogs)
-    - [Restart DNS](#restart-dns)
 - [Development](#development)
     - [Notes](#note)
 
@@ -103,17 +99,13 @@ Steps to configure the integration after installing using [#setup](#setup).
 7. Enjoy your newly configured `Pi-Hole V6` integration
 
 ## Actions
-### Pi-Hole Toggle
-Toggles Pi-Hole on or off for a period of 5 minues.
-
-### Update Gravity
-Sends a POST request to Pi-Hole telling it to update the ad block lists for Gravity.
-
-### Flush Arp/Logs
-Clears the logs or ARP tables.
-
-### Restart DNS
-Restarts the DNS of the Pi-Hole instance.
+| Action | Key | Description |
+|:------:|:---:|:-----------:|
+| Restart DNS | restart_dns | Restarts the DNS of the Pi-Hole instance. |
+| Pi-Hole | pi_hole_switch | Toggles Pi-Hole On/Off |
+| Update Gravity | update_gravity | Updates the dns blocking lists found in Gravity |
+| Flush Arp | flush_arp | Clears the ARP (Adress resolution protocol) tables.
+| Flush Logs | flush_logs | Clears the web, core and ftl logs
 
 ## Development
 The `compose.yaml` file can be found [/development/compose.yaml](/development/compose.yaml) and contains

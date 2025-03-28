@@ -4,7 +4,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.const import CONF_NAME
 from homeassistant.config_entries import ConfigEntry
 import logging, async_timeout
-from datetime import timedelta
+from datetime import timedelta, datetime
 from .exceptions import HoleException
 from homeassistant.exceptions import ConfigEntryAuthFailed
 from .models.const import MIN_TIME_BETWEEN_UPDATES
@@ -24,6 +24,8 @@ class PiHoleUpdateCoordinator(DataUpdateCoordinator):
         )
         self._device: PiHole | None
         self.config = config
+        self._git_next_update = datetime.now()
+        self._git_last_update = None
 
     async def _async_setup(self):
         self._device = PiHole(self.hass, self.config)
@@ -38,15 +40,11 @@ class PiHoleUpdateCoordinator(DataUpdateCoordinator):
                 await self._device.update_versions()
                 await self._device.update_statistics()
 
-                summaries = [
-                    "pi-hole/web",
-                    "pi-hole/FTL",
-                    "pi-hole/pi-hole",
-                    "erikkamph/pihole_ci_v6"
-                ]
-                for summary in summaries:
-                    await self._device.update_summary(summary)
-
+                if datetime.now() > self._git_next_update:
+                    self._git_last_update = datetime.now()
+                    await self._device.update_summary("erikkamph/pihole_ci_v6")
+                    self._git_next_update = self._git_last_update + timedelta(days=7)
+                
                 return self._device.data
         except HoleException as err:
             raise ConfigEntryAuthFailed from err

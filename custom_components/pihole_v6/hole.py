@@ -5,7 +5,7 @@ from .models.auth import PiHoleAuth
 from .models.const import HEADER_CSRF, HEADER_SID
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.importlib import async_import_module
-from .exceptions import HoleException
+from .exceptions import HoleException, HoleVersionError
 from pydantic import BaseModel
 from .models.summary import PiHoleSummary
 from .models.dns import PiHoleDnsBlocking
@@ -165,7 +165,7 @@ class PiHole():
             return False
         
         if not installed_version or installed_version == '':
-            raise ValueError("Unknown version installed")
+            raise HoleVersionError("Unknown version installed")
         
         latest = ''.join(latest_version.replace("v", "").split("."))
         installed = ''.join(installed_version.replace("v", "").split("."))
